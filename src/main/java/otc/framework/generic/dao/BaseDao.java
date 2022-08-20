@@ -39,8 +39,31 @@ import otc.framework.generic.dao.dto.TableMetaDataDto;
 /**
  * The Interface BaseDao.
  */
-public interface BaseDao extends DbCommonDao {
+public interface BaseDao {
 	
+	/** The nanos in one milli. */
+	long NANOS_IN_ONE_MILLI = 1000000;
+	
+	/** The column status. */
+	String COLUMN_NAME_STATUS = "STATUS";
+	
+	/** The column remote address. */
+	String COLUMN_REMOTE_ADDRESS = "remote_address";
+	
+	/** The column remote host. */
+	String COLUMN_REMOTE_HOST = "remote_host";
+	
+	/** The column created timestamp. */
+	String COLUMN_CREATED_TIMESTAMP = "created_timestamp";
+	
+	/** The column created by. */
+	String COLUMN_CREATED_BY = "CREATED_BY";
+	
+	/** The column updated timestamp. */
+	String COLUMN_UPDATED_TIMESTAMP = "updated_timestamp";
+	
+	/** The column updated by. */
+	String COLUMN_UPDATED_BY = "UPDATED_BY";
 	/**
 	 * Checks if is table exists.
 	 *
