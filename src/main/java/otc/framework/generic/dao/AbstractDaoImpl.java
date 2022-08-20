@@ -71,73 +71,13 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		
 		/** The and. */
 		AND, 
- /** The or. */
- OR
+		 /** The or. */
+		 OR
 	};
 
-	/** The Constant SPACE. */
-	protected static final String SPACE = " ";
-	
-	/** The Constant APOSTROPHE. */
-	protected static final String APOSTROPHE = "'";
-	
-	/** The Constant EQUALS. */
-	protected static final String EQUALS = "=";
-	
-	/** The Constant COMMA. */
-	protected static final String COMMA = ",:";
-	
-	/** The Constant COLON. */
-	protected static final String COLON = ":";
-	
-	/** The Constant SEMI_COLON. */
-	protected static final String SEMI_COLON = ";";
-	
-	/** The Constant ASTERISK. */
-	protected static final String ASTERISK = "*";
-	
-	/** The Constant OPEN_PARANTHESIS. */
-	protected static final String OPEN_PARANTHESIS = "(";
-	
-	/** The Constant CLOSE_PARANTHESIS. */
-	protected static final String CLOSE_PARANTHESIS = ")";
-
-	/** The Constant WHERE. */
-	protected static final String WHERE = " where ";
-	
-	/** The Constant IS. */
-	protected static final String IS = " is ";
-	
-	/** The Constant IN. */
-	protected static final String IN = " in ";
-	
-	/** The Constant IS_NULL. */
-	protected static final String IS_NULL = " IS NULL ";
-	
-	/** The Constant IS_NOT_NULL. */
-	protected static final String IS_NOT_NULL = " IS NOT NULL ";
-	
-	/** The Constant BETWEEN. */
-	protected static final String BETWEEN = " between '";
-	
-	/** The Constant SET. */
-	protected static final String SET = " set ";
-	
-	/** The Constant CREATE_TABLE. */
-	protected static final String CREATE_TABLE = "CREATE TABLE";
-	
-	/** The Constant PRIMARY_KEY. */
-	protected static final String PRIMARY_KEY = "PRIMARY KEY";
-	
-	/** The Constant SELECT. */
-	protected static final String SELECT = "SELECT ";
-	
-	/** The Constant NEXTVAL_FROM_DUAL. */
-	protected static final String NEXTVAL_FROM_DUAL = ".NEXTVAL FROM DUAL";
-	
 	/** The Constant simpleTypes. */
 	protected static final List<Class<?>> simpleTypes = new ArrayList<>();
-	
+
 	/** The data source. */
 	@Autowired
 	private DataSource dataSource;
@@ -220,21 +160,23 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		StringBuilder sql = null;
 		for (ColumnMetaDataDto columnMetaDataDto : tableMetaDataDto.getColumns()) {
 			if (sql == null) {
-				sql = new StringBuilder(CREATE_TABLE).append(tableMetaDataDto.getTableName());
+				sql = new StringBuilder(GenericDaoConstants.CREATE_TABLE).append(tableMetaDataDto.getTableName());
 			} else {
-				sql.append(COMMA);
+				sql.append(GenericDaoConstants.COMMA);
 			}
-			sql.append(columnMetaDataDto.getColumnName()).append(SPACE).append(columnMetaDataDto.getTypeName());
+			sql.append(columnMetaDataDto.getColumnName())
+				.append(GenericDaoConstants.SPACE)
+				.append(columnMetaDataDto.getTypeName());
 			Set<CONSTRAINTS> constraints = columnMetaDataDto.getConstraints();
 			if (constraints != null && !constraints.isEmpty()) {
 				for (CONSTRAINTS constraint : constraints) {
 					if (constraint == CONSTRAINTS.PRIMARY_KEY) {
-						sql.append(SPACE + PRIMARY_KEY);
+						sql.append(GenericDaoConstants.SPACE + GenericDaoConstants.PRIMARY_KEY);
 					}
 				}
 			}
 		}
-		sql.append(SEMI_COLON);
+		sql.append(GenericDaoConstants.SEMI_COLON);
 		jdbcTemplate.execute(sql.toString());
 		return true;
 	}
@@ -247,7 +189,9 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public long fetchNextSeqValue(String seqName) {
-		StringBuilder sql = new StringBuilder(SELECT).append(seqName).append(NEXTVAL_FROM_DUAL);
+		StringBuilder sql = new StringBuilder(GenericDaoConstants.SELECT)
+					.append(seqName)
+					.append(GenericDaoConstants.NEXTVAL_FROM_DUAL);
 		return jdbcTemplate.queryForObject(sql.toString(), Long.class);
 	}
 
@@ -600,7 +544,8 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	protected StringBuilder buildWhereClause(StringBuilder whereClause, String colName, String value,
 			AND_OR logicalOperator, boolean isUseNamedCriteria) {
-		return buildWhereClause(whereClause, colName, value, logicalOperator, EQUALS, isUseNamedCriteria);
+		return buildWhereClause(whereClause, colName, value, logicalOperator, GenericDaoConstants.EQUALS, 
+				isUseNamedCriteria);
 	}
 
 	/**
@@ -637,29 +582,35 @@ public abstract class AbstractDaoImpl implements BaseDao {
 			List<String> ignoreCriteriaFields) {
 		boolean isIgnoreFieldsContainsIgnoreCase = containsIgnoreCase(ignoreCriteriaFields, colName);
 		if (whereClause == null) {
-			whereClause = new StringBuilder(WHERE);
-		} else if (!whereClause.toString().equals(WHERE)) {
+			whereClause = new StringBuilder(GenericDaoConstants.WHERE);
+		} else if (!whereClause.toString().equals(GenericDaoConstants.WHERE)) {
 			if (logicalOperator != null && (ignoreCriteriaFields == null || !isIgnoreFieldsContainsIgnoreCase)) {
-				whereClause.append(SPACE).append(logicalOperator.name()).append(SPACE);
+				whereClause.append(GenericDaoConstants.SPACE)
+					.append(logicalOperator.name())
+					.append(GenericDaoConstants.SPACE);
 			}
 		}
 		if (value != null && !isIgnoreFieldsContainsIgnoreCase) {
 			value = value.trim();
-			if (value.equalsIgnoreCase(IS_NULL.trim())) {
-				whereClause.append(colName).append(IS_NULL);
-			} else if (value.equalsIgnoreCase(ASTERISK) || IS_NOT_NULL.trim().equals(value)) {
-				whereClause.append(colName).append(IS_NOT_NULL);
+			if (value.equalsIgnoreCase(GenericDaoConstants.IS_NULL.trim())) {
+				whereClause.append(colName).append(GenericDaoConstants.IS_NULL);
+			} else if (value.equalsIgnoreCase(GenericDaoConstants.ASTERISK) || 
+					GenericDaoConstants.IS_NOT_NULL.trim().equals(value)) {
+				whereClause.append(colName).append(GenericDaoConstants.IS_NOT_NULL);
 			} else {
 				whereClause.append(colName)
 					.append(relationalOperator)
-					.append(APOSTROPHE)
+					.append(GenericDaoConstants.APOSTROPHE)
 					.append(value)
-					.append(APOSTROPHE);
+					.append(GenericDaoConstants.APOSTROPHE);
 			}
 		} else if (isUseNamedCriteria) {
-			whereClause.append(colName).append(relationalOperator).append(COLON).append(colName);
+			whereClause.append(colName)
+				.append(relationalOperator)
+				.append(GenericDaoConstants.COLON)
+				.append(colName);
 		} else if (ignoreCriteriaFields == null || !isIgnoreFieldsContainsIgnoreCase) {
-			whereClause.append(colName).append(IS_NULL);
+			whereClause.append(colName).append(GenericDaoConstants.IS_NULL);
 		}
 		return whereClause;
 	}
@@ -680,15 +631,21 @@ public abstract class AbstractDaoImpl implements BaseDao {
 			throw new DaoException("", "Invalid Begin-value and / or End-value!");
 		}
 		if (whereClause == null) {
-			whereClause = new StringBuilder(WHERE);
-		} else if (!whereClause.toString().equals(WHERE)) {
+			whereClause = new StringBuilder(GenericDaoConstants.WHERE);
+		} else if (!whereClause.toString().equals(GenericDaoConstants.WHERE)) {
 			if (logicalOperator != null) {
-				whereClause.append(SPACE).append(logicalOperator.name()).append(SPACE);
+				whereClause.append(GenericDaoConstants.SPACE)
+					.append(logicalOperator.name())
+					.append(GenericDaoConstants.SPACE);
 			}
 		}
-		whereClause.append(columnName).append(BETWEEN).append(beginValue).append(APOSTROPHE + SPACE)
+		whereClause.append(columnName)
+			.append(GenericDaoConstants.BETWEEN)
+			.append(beginValue)
+			.append(GenericDaoConstants.APOSTROPHE + GenericDaoConstants.SPACE)
 			.append(AND_OR.AND)
-				.append(SPACE + APOSTROPHE).append(endValue).append(APOSTROPHE);
+			.append(GenericDaoConstants.SPACE + GenericDaoConstants.APOSTROPHE)
+			.append(endValue).append(GenericDaoConstants.APOSTROPHE);
 		return whereClause;
 	}
 
@@ -714,14 +671,19 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	protected StringBuilder buildSetClause(StringBuilder setClause, String colName, String value) {
 		if (colName != null) {
 			if (setClause == null) {
-				setClause = new StringBuilder(SET);
+				setClause = new StringBuilder(GenericDaoConstants.SET);
 			} else {
-				setClause.append(COMMA + SPACE);
+				setClause.append(GenericDaoConstants.COMMA + GenericDaoConstants.SPACE);
 			}
 			if (value != null) {
-				setClause.append(colName).append(EQUALS + APOSTROPHE).append(value).append(APOSTROPHE);
+				setClause.append(colName)
+					.append(GenericDaoConstants.EQUALS + GenericDaoConstants.APOSTROPHE)
+					.append(value)
+					.append(GenericDaoConstants.APOSTROPHE);
 			} else {
-				setClause.append(colName).append(EQUALS + COLON).append(colName);
+				setClause.append(colName)
+					.append(GenericDaoConstants.EQUALS + GenericDaoConstants.COLON)
+					.append(colName);
 			}
 		}
 		return setClause;
@@ -738,8 +700,10 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		if (csvSqlString == null || csvSqlString.isEmpty()) {
 			return null;
 		}
-		csvSqlString = new StringBuilder(IN + OPEN_PARANTHESIS).append(csvSqlString)
-				.append(CLOSE_PARANTHESIS).toString();
+		csvSqlString = new StringBuilder(GenericDaoConstants.IN + GenericDaoConstants.OPEN_PARANTHESIS)
+				.append(csvSqlString)
+				.append(GenericDaoConstants.CLOSE_PARANTHESIS)
+				.toString();
 		return csvSqlString;
 	}
 
@@ -755,9 +719,11 @@ public abstract class AbstractDaoImpl implements BaseDao {
 			if (values == null) {
 				values = new StringBuilder();
 			} else {
-				values.append(COMMA);
+				values.append(GenericDaoConstants.COMMA);
 			}
-			values.append(APOSTROPHE).append(value).append(APOSTROPHE);
+			values.append(GenericDaoConstants.APOSTROPHE)
+				.append(value)
+				.append(GenericDaoConstants.APOSTROPHE);
 		}
 		return values.toString();
 	}
@@ -871,31 +837,31 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	private String sanitizeWhereClauseForNullCriteria(String sql, Map<String, Object> paramasMap) {
 		String tempSql = sql.toLowerCase();
-		if (!tempSql.contains(WHERE)) {
+		if (!tempSql.contains(GenericDaoConstants.WHERE)) {
 			return sql;
 		}
-		int idx = tempSql.indexOf(WHERE) + 7;
+		int idx = tempSql.indexOf(GenericDaoConstants.WHERE) + 7;
 		String selectClause = sql.substring(0, idx);
 		String whereClause = sql.substring(idx).trim();
-		if (!whereClause.contains(COLON)) {
+		if (!whereClause.contains(GenericDaoConstants.COLON)) {
 			return sql;
 		}
-		idx = whereClause.indexOf(COLON);
+		idx = whereClause.indexOf(GenericDaoConstants.COLON);
 		while (idx >= 0) {
 			String namedParam = null;
-			if (whereClause.indexOf(SPACE, idx + 2) > 0) {
-				namedParam = whereClause.substring(idx + 1, whereClause.indexOf(SPACE, idx + 2));
+			if (whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2) > 0) {
+				namedParam = whereClause.substring(idx + 1, whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2));
 			} else {
 				namedParam = whereClause.substring(idx + 1);
 			}
 			String leadSql = whereClause.substring(0, idx).trim();
 			if (paramasMap.get(namedParam) == null) {
-				if (leadSql.endsWith(EQUALS)) {
-					leadSql = leadSql.substring(0, leadSql.length() - 2).concat(IS);
+				if (leadSql.endsWith(GenericDaoConstants.EQUALS)) {
+					leadSql = leadSql.substring(0, leadSql.length() - 2).concat(GenericDaoConstants.IS);
 				}
 			}
 			whereClause = leadSql.concat(whereClause.substring(idx));
-			idx = whereClause.indexOf(COLON, idx + namedParam.length());
+			idx = whereClause.indexOf(GenericDaoConstants.COLON, idx + namedParam.length());
 		}
 		return selectClause.concat(whereClause);
 	}

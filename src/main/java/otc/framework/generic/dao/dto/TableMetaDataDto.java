@@ -25,10 +25,16 @@ package otc.framework.generic.dao.dto;
 import java.sql.Types;
 import java.util.Set;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import otc.framework.generic.dao.GenericDaoConstants;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class TableMetaDataDto.
  */
+@Data
 public class TableMetaDataDto {
 	
 	/**
@@ -38,12 +44,12 @@ public class TableMetaDataDto {
 		
 		/** The oracle. */
 		ORACLE, 
- /** The ms sql. */
- MS_SQL, 
- /** The mysql. */
- MYSQL, 
- /** The postgres. */
- POSTGRES
+		/** The ms sql. */
+		MS_SQL, 
+		/** The mysql. */
+		MYSQL, 
+		/** The postgres. */
+		POSTGRES
 	};
 
 	/** The database name. */
@@ -59,87 +65,15 @@ public class TableMetaDataDto {
 	private DIALECT dialect;
 
 	/**
-	 * Gets the database name.
-	 *
-	 * @return the database name
-	 */
-	public String getDatabaseName() {
-		return databaseName;
-	}
-
-	/**
-	 * Sets the database name.
-	 *
-	 * @param databaseName the new database name
-	 */
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
-	}
-
-	/**
-	 * Gets the table name.
-	 *
-	 * @return the table name
-	 */
-	public String getTableName() {
-		return tableName;
-	}
-
-	/**
-	 * Sets the table name.
-	 *
-	 * @param tableName the new table name
-	 */
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	/**
-	 * Gets the columns.
-	 *
-	 * @return the columns
-	 */
-	public Set<ColumnMetaDataDto> getColumns() {
-		return columns;
-	}
-
-	/**
-	 * Sets the columns.
-	 *
-	 * @param columns the new columns
-	 */
-	public void setColumns(Set<ColumnMetaDataDto> columns) {
-		this.columns = columns;
-	}
-
-	/**
-	 * Gets the dialect.
-	 *
-	 * @return the dialect
-	 */
-	public DIALECT getDialect() {
-		return dialect;
-	}
-
-	/**
-	 * Sets the dialect.
-	 *
-	 * @param dialect the new dialect
-	 */
-	public void setDialect(DIALECT dialect) {
-		this.dialect = dialect;
-	}
-
-	/**
 	 * The Class ColumnMetaDataDto.
 	 */
+	@Data
 	public static final class ColumnMetaDataDto {
 		
 		/**
 		 * The Enum CONSTRAINTS.
 		 */
 		public enum CONSTRAINTS {
-			
 			/** The primary key. */
 			PRIMARY_KEY
 		};
@@ -148,26 +82,16 @@ public class TableMetaDataDto {
 		 * The Enum TYPE.
 		 */
 		public enum TYPE {
-			
-			/** The varchar. */
+
 			VARCHAR(Types.VARCHAR), 
- /** The byte. */
- BYTE(Types.TINYINT), 
- /** The short. */
- SHORT(Types.SMALLINT), 
- /** The int. */
- INT(Types.INTEGER), 
- /** The long. */
- LONG(Types.BIGINT),
-			
-			/** The float. */
+			BYTE(Types.TINYINT), 
+			SHORT(Types.SMALLINT), 
+			INT(Types.INTEGER), 
+			LONG(Types.BIGINT),
 			FLOAT(Types.REAL), 
- /** The double. */
- DOUBLE(Types.DOUBLE), 
- /** The date. */
- DATE(Types.DATE), 
- /** The timestamp. */
- TIMESTAMP(Types.TIMESTAMP);
+			DOUBLE(Types.DOUBLE), 
+			DATE(Types.DATE), 
+			TIMESTAMP(Types.TIMESTAMP);
 
 			/** The value. */
 			int value;
@@ -186,6 +110,7 @@ public class TableMetaDataDto {
 		private String columnName;
 		
 		/** The type. */
+		@Getter(AccessLevel.NONE)
 		private TYPE type;
 		
 		/** The length. */
@@ -195,94 +120,34 @@ public class TableMetaDataDto {
 		private Set<CONSTRAINTS> constraints;
 
 		/**
-		 * Gets the column name.
-		 *
-		 * @return the column name
-		 */
-		public String getColumnName() {
-			return columnName;
-		}
-
-		/**
-		 * Sets the column name.
-		 *
-		 * @param columnName the new column name
-		 */
-		public void setColumnName(String columnName) {
-			this.columnName = columnName;
-		}
-
-		/**
-		 * Sets the type.
-		 *
-		 * @param type the new type
-		 */
-		public void setType(TYPE type) {
-			this.type = type;
-		}
-
-		/**
 		 * Gets the type name.
 		 *
 		 * @return the type name
 		 */
 		public String getTypeName() {
 			if (type == TYPE.VARCHAR) {
-				return new StringBuilder("varchar(").append(length).append(")").toString();
+				return new StringBuilder(GenericDaoConstants.VARCHAR + GenericDaoConstants.CLOSE_PARANTHESIS)
+						.append(length)
+						.append(GenericDaoConstants.CLOSE_PARANTHESIS)
+						.toString();
 			} else if (type.equals(TYPE.BYTE)) {
-				return "TINYINT";
+				return GenericDaoConstants.TINYINT;
 			} else if (type.equals(TYPE.SHORT)) {
-				return "SMALLINT";
+				return GenericDaoConstants.SMALLINT;
 			} else if (type.equals(TYPE.INT)) {
-				return "INTEGER";
+				return GenericDaoConstants.INTEGER;
 			} else if (type.equals(TYPE.LONG)) {
-				return "BIGINT";
+				return GenericDaoConstants.BIGINT;
 			} else if (type.equals(TYPE.FLOAT)) {
-				return "REAL";
+				return GenericDaoConstants.REAL;
 			} else if (type.equals(TYPE.DOUBLE)) {
-				return "DOUBLE";
+				return GenericDaoConstants.DOUBLE;
 			} else if (type.equals(TYPE.DATE)) {
-				return "DATE";
+				return GenericDaoConstants.DATE;
 			} else if (type.equals(TYPE.TIMESTAMP)) {
-				return "TIMESTAMP";
+				return GenericDaoConstants.TIMESTAMP;
 			}
 			return null;
-		}
-
-		/**
-		 * Gets the length.
-		 *
-		 * @return the length
-		 */
-		public int getLength() {
-			return length;
-		}
-
-		/**
-		 * Sets the length.
-		 *
-		 * @param length the new length
-		 */
-		public void setLength(int length) {
-			this.length = length;
-		}
-
-		/**
-		 * Gets the constraints.
-		 *
-		 * @return the constraints
-		 */
-		public Set<CONSTRAINTS> getConstraints() {
-			return constraints;
-		}
-
-		/**
-		 * Sets the constraints.
-		 *
-		 * @param constraints the new constraints
-		 */
-		public void setConstraints(Set<CONSTRAINTS> constraints) {
-			this.constraints = constraints;
 		}
 	}
 }
