@@ -126,7 +126,7 @@ public interface BaseDao {
 	 * @param generatedKey the generated key
 	 * @return the object
 	 */
-	public Object executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKey);
+	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKey);
 
 	/**
 	 * Execute insert and return key.
@@ -136,7 +136,7 @@ public interface BaseDao {
 	 * @param generatedKeys the generated keys
 	 * @return the object
 	 */
-	public Object executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeys);
+	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeys);
 
 	/**
 	 * Execute batch insert.

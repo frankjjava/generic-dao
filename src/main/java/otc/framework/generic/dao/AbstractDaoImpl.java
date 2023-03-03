@@ -53,7 +53,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import otc.framework.generic.dao.dto.TableMetaDataDto;
 import otc.framework.generic.dao.dto.TableMetaDataDto.ColumnMetaDataDto;
 import otc.framework.generic.dao.dto.TableMetaDataDto.ColumnMetaDataDto.CONSTRAINTS;
-import otc.framework.generic.dao.exception.DaoException;
+import otc.framework.generic.dao.exception.GenericDaoException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -70,10 +70,10 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	protected enum AND_OR {
 		
 		/** The and. */
-		AND, 
-		 /** The or. */
-		 OR
-	};
+		AND,
+		/** The or. */
+		OR
+	}
 
 	/** The Constant simpleTypes. */
 	protected static final List<Class<?>> simpleTypes = new ArrayList<>();
@@ -113,6 +113,10 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@PostConstruct
 	public void init() {
+		if (dataSource == null) {
+			throw new GenericDaoException("Datasource is not injected. " +
+					"Create managed-bean of Datasource to have it auto-wired !");
+		}
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		setJdbcTemplate(jdbcTemplate);
 	}
@@ -157,6 +161,9 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public boolean createTable(TableMetaDataDto tableMetaDataDto) {
+		if (tableMetaDataDto.getColumns().isEmpty()) {
+			throw new GenericDaoException("Cannot create table - table-columns meta info not available !");
+		}
 		StringBuilder sql = null;
 		for (ColumnMetaDataDto columnMetaDataDto : tableMetaDataDto.getColumns()) {
 			if (sql == null) {
@@ -189,10 +196,10 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public long fetchNextSeqValue(String seqName) {
-		StringBuilder sql = new StringBuilder(GenericDaoConstants.SELECT)
-					.append(seqName)
-					.append(GenericDaoConstants.NEXTVAL_FROM_DUAL);
-		return jdbcTemplate.queryForObject(sql.toString(), Long.class);
+		String sql = GenericDaoConstants.SELECT
+					.concat(seqName)
+					.concat(GenericDaoConstants.NEXTVAL_FROM_DUAL);
+		return jdbcTemplate.queryForObject(sql, Long.class);
 	}
 
 	/**
@@ -205,8 +212,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	@Override
 	public int executeInsert(String table, Map<String, Object> params) {
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), null);
-		int count = jdbcInsert.execute(params);
-		return count;
+		return jdbcInsert.execute(params);
 	}
 
 	/**
@@ -222,8 +228,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		Set<String> generatedKeys = new HashSet<>();
 		generatedKeys.add(generatedKey);
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
-		KeyHolder keyHolder = jdbcInsert.executeAndReturnKeyHolder(params);
-		return keyHolder;
+		return jdbcInsert.executeAndReturnKeyHolder(params);
 	}
 
 	/**
@@ -238,8 +243,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params,
 			Set<String> generatedKeys) {
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
-		KeyHolder keyHolder = jdbcInsert.executeAndReturnKeyHolder(params);
-		return keyHolder;
+		return jdbcInsert.executeAndReturnKeyHolder(params);
 	}
 
 	/**
@@ -251,12 +255,11 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @return the object
 	 */
 	@Override
-	public Object executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKey) {
+	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKey) {
 		Set<String> generatedKeys = new HashSet<>();
 		generatedKeys.add(generatedKey);
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
-		Object object = jdbcInsert.executeAndReturnKey(params);
-		return object;
+		return (T) jdbcInsert.executeAndReturnKey(params);
 	}
 
 	/**
@@ -268,10 +271,9 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @return the object
 	 */
 	@Override
-	public Object executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeys) {
+	public <T> T  executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeys) {
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
-		Object object = jdbcInsert.executeAndReturnKey(params);
-		return object;
+		return (T) jdbcInsert.executeAndReturnKey(params);
 	}
 
 	/**
@@ -284,8 +286,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	@Override
 	public int[] executeBatchInsert(String table, Map<String, Object>[] params) {
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params, null);
-		int[] count = jdbcInsert.executeBatch(params);
-		return count;
+		return jdbcInsert.executeBatch(params);
 	}
 
 	/**
@@ -299,8 +300,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	@Override
 	public int[] executeBatchInsert(String schema, String table, Map<String, Object>[] params) {
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params, null);
-		int[] count = jdbcInsert.executeBatch(params);
-		return count;
+		return jdbcInsert.executeBatch(params);
 	}
 
 	/**
@@ -628,7 +628,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	protected StringBuilder buildWhereBetweenClause(StringBuilder whereClause, AND_OR logicalOperator,
 			String columnName, String beginValue, String endValue) {
 		if (beginValue == null || endValue == null) {
-			throw new DaoException("", "Invalid Begin-value and / or End-value!");
+			throw new GenericDaoException("Invalid Begin-value and / or End-value!");
 		}
 		if (whereClause == null) {
 			whereClause = new StringBuilder(GenericDaoConstants.WHERE);
@@ -823,7 +823,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		try {
 			value = fld.get(obj);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new DaoException(e);
+			throw new GenericDaoException(e);
 		}
 		return value;
 	}
