@@ -57,13 +57,13 @@ public interface BaseDao {
 	String COLUMN_CREATED_TIMESTAMP = "created_timestamp";
 	
 	/** The column created by. */
-	String COLUMN_CREATED_BY = "CREATED_BY";
+	String COLUMN_CREATED_BY = "created_by";
 	
 	/** The column updated timestamp. */
 	String COLUMN_UPDATED_TIMESTAMP = "updated_timestamp";
 	
 	/** The column updated by. */
-	String COLUMN_UPDATED_BY = "UPDATED_BY";
+	String COLUMN_UPDATED_BY = "updated_by";
 	/**
 	 * Checks if is table exists.
 	 *
@@ -97,7 +97,9 @@ public interface BaseDao {
 	 */
 	public abstract int executeInsert(String table, Map<String, Object> params);
 
-	/**
+    KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params);
+
+    /**
 	 * Execute insert and return key holder.
 	 *
 	 * @param table the table
@@ -117,6 +119,8 @@ public interface BaseDao {
 	 */
 	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params,
 			Set<String> generatedKeys);
+
+	<T> T executeInsertAndReturnKey(String table, Map<String, Object> params);
 
 	/**
 	 * Execute insert and return key.

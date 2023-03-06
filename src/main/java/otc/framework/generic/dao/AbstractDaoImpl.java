@@ -83,6 +83,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	private DataSource dataSource;
 	
 	/** The jdbc template. */
+	@Autowired
 	protected JdbcTemplate jdbcTemplate;
 	
 	/** The named jdbc template. */
@@ -220,6 +221,19 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 *
 	 * @param table the table
 	 * @param params the params
+	 * @return the key holder
+	 */
+	@Override
+	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params) {
+		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), null);
+		return jdbcInsert.executeAndReturnKeyHolder(params);
+	}
+
+	/**
+	 * Execute insert and return key holder.
+	 *
+	 * @param table the table
+	 * @param params the params
 	 * @param generatedKey the generated key
 	 * @return the key holder
 	 */
@@ -241,7 +255,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params,
-			Set<String> generatedKeys) {
+													 Set<String> generatedKeys) {
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
 		return jdbcInsert.executeAndReturnKeyHolder(params);
 	}
@@ -259,6 +273,19 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		Set<String> generatedKeys = new HashSet<>();
 		generatedKeys.add(generatedKey);
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
+		return (T) jdbcInsert.executeAndReturnKey(params);
+	}
+
+	/**
+	 * Execute insert and return key.
+	 *
+	 * @param table the table
+	 * @param params the params
+	 * @return the object
+	 */
+	@Override
+	public <T> T  executeInsertAndReturnKey(String table, Map<String, Object> params) {
+		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), null);
 		return (T) jdbcInsert.executeAndReturnKey(params);
 	}
 
