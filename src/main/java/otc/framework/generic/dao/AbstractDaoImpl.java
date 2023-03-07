@@ -221,11 +221,14 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 *
 	 * @param table the table
 	 * @param params the params
+	 * @param generatedKeyName the generated key
 	 * @return the key holder
 	 */
 	@Override
-	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params) {
-		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), null);
+	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params, String generatedKeyName) {
+		Set<String> generatedKeyNames = new HashSet<>();
+		generatedKeyNames.add(generatedKeyName);
+		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeyNames);
 		return jdbcInsert.executeAndReturnKeyHolder(params);
 	}
 
@@ -234,29 +237,13 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 *
 	 * @param table the table
 	 * @param params the params
-	 * @param generatedKey the generated key
-	 * @return the key holder
-	 */
-	@Override
-	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params, String generatedKey) {
-		Set<String> generatedKeys = new HashSet<>();
-		generatedKeys.add(generatedKey);
-		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
-		return jdbcInsert.executeAndReturnKeyHolder(params);
-	}
-
-	/**
-	 * Execute insert and return key holder.
-	 *
-	 * @param table the table
-	 * @param params the params
-	 * @param generatedKeys the generated keys
+	 * @param generatedKeyNames the generated keys
 	 * @return the key holder
 	 */
 	@Override
 	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params,
-													 Set<String> generatedKeys) {
-		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
+			Set<String> generatedKeyNames) {
+		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeyNames);
 		return jdbcInsert.executeAndReturnKeyHolder(params);
 	}
 
@@ -265,14 +252,14 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 *
 	 * @param table the table
 	 * @param params the params
-	 * @param generatedKey the generated key
+	 * @param generatedKeyName the generated key
 	 * @return the object
 	 */
 	@Override
-	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKey) {
-		Set<String> generatedKeys = new HashSet<>();
-		generatedKeys.add(generatedKey);
-		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
+	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKeyName) {
+		Set<String> generatedKeyNames = new HashSet<>();
+		generatedKeyNames.add(generatedKeyName);
+		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeyNames);
 		return (T) jdbcInsert.executeAndReturnKey(params);
 	}
 
@@ -281,25 +268,12 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 *
 	 * @param table the table
 	 * @param params the params
+	 * @param generatedKeyNames the generated keys
 	 * @return the object
 	 */
 	@Override
-	public <T> T  executeInsertAndReturnKey(String table, Map<String, Object> params) {
-		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), null);
-		return (T) jdbcInsert.executeAndReturnKey(params);
-	}
-
-	/**
-	 * Execute insert and return key.
-	 *
-	 * @param table the table
-	 * @param params the params
-	 * @param generatedKeys the generated keys
-	 * @return the object
-	 */
-	@Override
-	public <T> T  executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeys) {
-		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeys);
+	public <T> T  executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeyNames) {
+		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(null, table, params.keySet(), generatedKeyNames);
 		return (T) jdbcInsert.executeAndReturnKey(params);
 	}
 
@@ -899,17 +873,17 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @param schema the schema
 	 * @param table the table
 	 * @param params the params
-	 * @param generatedKeys the generated keys
+	 * @param generatedKeyNames the generated keys
 	 * @return the simple jdbc insert
 	 */
 	private SimpleJdbcInsert createSimpleJdbcInsert(String schema, String table, Set<String> params,
-			Set<String> generatedKeys) {
+			Set<String> generatedKeyNames) {
 		SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName(table);
 		if (schema != null) {
 			jdbcInsert = jdbcInsert.withSchemaName(schema);
 		}
-		if (generatedKeys != null && !generatedKeys.isEmpty()) {
-			jdbcInsert = jdbcInsert.usingGeneratedKeyColumns(generatedKeys.toArray(new String[generatedKeys.size()]));
+		if (generatedKeyNames != null && !generatedKeyNames.isEmpty()) {
+			jdbcInsert = jdbcInsert.usingGeneratedKeyColumns(generatedKeyNames.toArray(new String[generatedKeyNames.size()]));
 		}
 		String[] columnNames = params.toArray(new String[params.size()]);
 		jdbcInsert = jdbcInsert.usingColumns(columnNames);
@@ -922,11 +896,11 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @param schema the schema
 	 * @param table the table
 	 * @param arrParams the arr params
-	 * @param generatedKeys the generated keys
+	 * @param generatedKeyNames the generated keys
 	 * @return the simple jdbc insert
 	 */
 	private SimpleJdbcInsert createSimpleJdbcInsert(String schema, String table, Map<String, Object>[] arrParams,
-			Set<String> generatedKeys) {
+			Set<String> generatedKeyNames) {
 		Set<String> columnNames = new HashSet<>();
 		for (Map<String, Object> params : arrParams) {
 			for (String columnName : params.keySet()) {
@@ -935,7 +909,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 				}
 			}
 		}
-		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(schema, table, columnNames, generatedKeys);
+		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(schema, table, columnNames, generatedKeyNames);
 		return jdbcInsert;
 	}
 

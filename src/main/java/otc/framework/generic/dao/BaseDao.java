@@ -97,50 +97,46 @@ public interface BaseDao {
 	 */
 	public abstract int executeInsert(String table, Map<String, Object> params);
 
-    KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params);
-
     /**
 	 * Execute insert and return key holder.
 	 *
 	 * @param table the table
 	 * @param params the params
-	 * @param generatedKey the generated key
+	 * @param generatedKeyName the generated key
 	 * @return the key holder
 	 */
-	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params, String generatedKey);
+	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params, String generatedKeyName);
 
 	/**
 	 * Execute insert and return key holder.
 	 *
 	 * @param table the table
 	 * @param params the params
-	 * @param generatedKeys the generated keys
+	 * @param generatedKeyNames the generated keys
 	 * @return the key holder
 	 */
 	public KeyHolder executeInsertAndReturnKeyHolder(String table, Map<String, Object> params,
-			Set<String> generatedKeys);
-
-	<T> T executeInsertAndReturnKey(String table, Map<String, Object> params);
+			Set<String> generatedKeyNames);
 
 	/**
 	 * Execute insert and return key.
 	 *
 	 * @param table the table
 	 * @param params the params
-	 * @param generatedKey the generated key
+	 * @param generatedKeyName the generated key
 	 * @return the object
 	 */
-	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKey);
+	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, String generatedKeyName);
 
 	/**
 	 * Execute insert and return key.
 	 *
 	 * @param table the table
 	 * @param params the params
-	 * @param generatedKeys the generated keys
+	 * @param generatedKeyNames the generated keys
 	 * @return the object
 	 */
-	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeys);
+	public <T> T executeInsertAndReturnKey(String table, Map<String, Object> params, Set<String> generatedKeyNames);
 
 	/**
 	 * Execute batch insert.
