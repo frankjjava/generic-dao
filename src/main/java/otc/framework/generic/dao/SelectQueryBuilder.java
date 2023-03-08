@@ -183,13 +183,13 @@ public class SelectQueryBuilder {
 //        IS_NOT(" IS NOT "),
 
             /** The where. */
-            WHERE(" where "),
+            WHERE(" WHERE "),
 
             /** The Constant BETWEEN. */
-            BETWEEN(" between '"),
+            BETWEEN(" BETWEEN "),
 
             /** The Constant SET. */
-            SET(" set ");
+            SET(" SET ");
 
             private final String label;
 
