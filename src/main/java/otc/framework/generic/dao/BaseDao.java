@@ -22,18 +22,17 @@
 */
 package otc.framework.generic.dao;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.KeyHolder;
-
 import otc.framework.generic.dao.dto.TableMetaDataDto;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,15 +42,12 @@ public interface BaseDao {
 	
 	/** The nanos in one milli. */
 	long NANOS_IN_ONE_MILLI = 1000000;
-	
+
+	String SELECT = "SELECT ";
+	String FROM = " FROM ";
+
 	/** The column status. */
 	String COLUMN_NAME_STATUS = "STATUS";
-	
-	/** The column remote address. */
-	String COLUMN_REMOTE_ADDRESS = "remote_address";
-	
-	/** The column remote host. */
-	String COLUMN_REMOTE_HOST = "remote_host";
 	
 	/** The column created timestamp. */
 	String COLUMN_CREATED_TIMESTAMP = "created_timestamp";

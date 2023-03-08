@@ -13,8 +13,7 @@ public interface GenericDaoConstants {
 	String APOSTROPHE = "'";
 	
 	/** The Constant EQUALS. */
-	String EQUALS = "=";
-	
+
 	/** The Constant COMMA. */
 	String COMMA = ",:";
 	
@@ -59,28 +58,7 @@ public interface GenericDaoConstants {
 
 	/** The Constant WHERE. */
 	String VARCHAR = "varchar";
-	
-	/** The where. */
-	String WHERE = " where ";
-	
-	/** The Constant IS. */
-	String IS = " is ";
-	
-	/** The Constant IN. */
-	String IN = " in ";
-	
-	/** The Constant IS_NULL. */
-	String IS_NULL = " IS NULL ";
-	
-	/** The Constant IS_NOT_NULL. */
-	String IS_NOT_NULL = " IS NOT NULL ";
-	
-	/** The Constant BETWEEN. */
-	String BETWEEN = " between '";
-	
-	/** The Constant SET. */
-	String SET = " set ";
-	
+
 	/** The Constant CREATE_TABLE. */
 	String CREATE_TABLE = "CREATE TABLE";
 	

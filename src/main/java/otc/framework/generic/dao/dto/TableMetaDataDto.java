@@ -22,13 +22,13 @@
 */
 package otc.framework.generic.dao.dto;
 
-import java.sql.Types;
-import java.util.Set;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import otc.framework.generic.dao.GenericDaoConstants;
+
+import java.sql.Types;
+import java.util.Set;
 
 // TODO: Auto-generated Javadoc
 /**

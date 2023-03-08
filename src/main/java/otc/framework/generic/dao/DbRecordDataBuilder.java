@@ -1,6 +1,5 @@
 package otc.framework.generic.dao;
 
-import org.springframework.util.StringUtils;
 import otc.framework.generic.dao.exception.GenericDaoException;
 
 import java.util.HashMap;
@@ -8,7 +7,7 @@ import java.util.Map;
 
 public class DbRecordDataBuilder {
 
-    Map<String, Object> params;
+    private Map<String, Object> params;
 
     private DbRecordDataBuilder() {}
 

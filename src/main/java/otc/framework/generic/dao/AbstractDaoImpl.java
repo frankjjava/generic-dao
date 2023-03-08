@@ -22,21 +22,6 @@
 */
 package otc.framework.generic.dao;
 
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +34,19 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.KeyHolder;
-
 import otc.framework.generic.dao.dto.TableMetaDataDto;
 import otc.framework.generic.dao.dto.TableMetaDataDto.ColumnMetaDataDto;
 import otc.framework.generic.dao.dto.TableMetaDataDto.ColumnMetaDataDto.CONSTRAINTS;
 import otc.framework.generic.dao.exception.GenericDaoException;
+
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -63,17 +56,6 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDaoImpl.class);
-	
-	/**
-	 * The Enum AND_OR.
-	 */
-	protected enum AND_OR {
-		
-		/** The and. */
-		AND,
-		/** The or. */
-		OR
-	}
 
 	/** The Constant simpleTypes. */
 	protected static final List<Class<?>> simpleTypes = new ArrayList<>();
@@ -534,123 +516,6 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	}
 
 	/**
-	 * Builds the where clause.
-	 *
-	 * @param whereClause the where clause
-	 * @param colName the col name
-	 * @param value the value
-	 * @param logicalOperator the logical operator
-	 * @param isUseNamedCriteria the is use named criteria
-	 * @return the string builder
-	 */
-	protected StringBuilder buildWhereClause(StringBuilder whereClause, String colName, String value,
-			AND_OR logicalOperator, boolean isUseNamedCriteria) {
-		return buildWhereClause(whereClause, colName, value, logicalOperator, GenericDaoConstants.EQUALS, 
-				isUseNamedCriteria);
-	}
-
-	/**
-	 * Builds the where clause.
-	 *
-	 * @param whereClause the where clause
-	 * @param colName the col name
-	 * @param value the value
-	 * @param logicalOperator the logical operator
-	 * @param relationalOperator the relational operator
-	 * @param isUseNamedCriteria the is use named criteria
-	 * @return the string builder
-	 */
-	protected StringBuilder buildWhereClause(StringBuilder whereClause, String colName, String value,
-			AND_OR logicalOperator, String relationalOperator, boolean isUseNamedCriteria) {
-		return buildWhereClause(whereClause, colName, value, logicalOperator, relationalOperator, isUseNamedCriteria,
-				null);
-	}
-
-	/**
-	 * Builds the where clause.
-	 *
-	 * @param whereClause the where clause
-	 * @param colName the col name
-	 * @param value the value
-	 * @param logicalOperator the logical operator
-	 * @param relationalOperator the relational operator
-	 * @param isUseNamedCriteria the is use named criteria
-	 * @param ignoreCriteriaFields the ignore criteria fields
-	 * @return the string builder
-	 */
-	protected StringBuilder buildWhereClause(StringBuilder whereClause, String colName, String value,
-			AND_OR logicalOperator, String relationalOperator, boolean isUseNamedCriteria,
-			List<String> ignoreCriteriaFields) {
-		boolean isIgnoreFieldsContainsIgnoreCase = containsIgnoreCase(ignoreCriteriaFields, colName);
-		if (whereClause == null) {
-			whereClause = new StringBuilder(GenericDaoConstants.WHERE);
-		} else if (!whereClause.toString().equals(GenericDaoConstants.WHERE)) {
-			if (logicalOperator != null && (ignoreCriteriaFields == null || !isIgnoreFieldsContainsIgnoreCase)) {
-				whereClause.append(GenericDaoConstants.SPACE)
-					.append(logicalOperator.name())
-					.append(GenericDaoConstants.SPACE);
-			}
-		}
-		if (value != null && !isIgnoreFieldsContainsIgnoreCase) {
-			value = value.trim();
-			if (value.equalsIgnoreCase(GenericDaoConstants.IS_NULL.trim())) {
-				whereClause.append(colName).append(GenericDaoConstants.IS_NULL);
-			} else if (value.equalsIgnoreCase(GenericDaoConstants.ASTERISK) || 
-					GenericDaoConstants.IS_NOT_NULL.trim().equals(value)) {
-				whereClause.append(colName).append(GenericDaoConstants.IS_NOT_NULL);
-			} else {
-				whereClause.append(colName)
-					.append(relationalOperator)
-					.append(GenericDaoConstants.APOSTROPHE)
-					.append(value)
-					.append(GenericDaoConstants.APOSTROPHE);
-			}
-		} else if (isUseNamedCriteria) {
-			whereClause.append(colName)
-				.append(relationalOperator)
-				.append(GenericDaoConstants.COLON)
-				.append(colName);
-		} else if (ignoreCriteriaFields == null || !isIgnoreFieldsContainsIgnoreCase) {
-			whereClause.append(colName).append(GenericDaoConstants.IS_NULL);
-		}
-		return whereClause;
-	}
-
-	/**
-	 * Builds the where between clause.
-	 *
-	 * @param whereClause the where clause
-	 * @param logicalOperator the logical operator
-	 * @param columnName the column name
-	 * @param beginValue the begin value
-	 * @param endValue the end value
-	 * @return the string builder
-	 */
-	protected StringBuilder buildWhereBetweenClause(StringBuilder whereClause, AND_OR logicalOperator,
-			String columnName, String beginValue, String endValue) {
-		if (beginValue == null || endValue == null) {
-			throw new GenericDaoException("Invalid Begin-value and / or End-value!");
-		}
-		if (whereClause == null) {
-			whereClause = new StringBuilder(GenericDaoConstants.WHERE);
-		} else if (!whereClause.toString().equals(GenericDaoConstants.WHERE)) {
-			if (logicalOperator != null) {
-				whereClause.append(GenericDaoConstants.SPACE)
-					.append(logicalOperator.name())
-					.append(GenericDaoConstants.SPACE);
-			}
-		}
-		whereClause.append(columnName)
-			.append(GenericDaoConstants.BETWEEN)
-			.append(beginValue)
-			.append(GenericDaoConstants.APOSTROPHE + GenericDaoConstants.SPACE)
-			.append(AND_OR.AND)
-			.append(GenericDaoConstants.SPACE + GenericDaoConstants.APOSTROPHE)
-			.append(endValue).append(GenericDaoConstants.APOSTROPHE);
-		return whereClause;
-	}
-
-	/**
 	 * Builds the set clause.
 	 *
 	 * @param setClause the set clause
@@ -672,18 +537,18 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	protected StringBuilder buildSetClause(StringBuilder setClause, String colName, String value) {
 		if (colName != null) {
 			if (setClause == null) {
-				setClause = new StringBuilder(GenericDaoConstants.SET);
+				setClause = new StringBuilder(WhereClauseBuilder.TOKENS.SET.toString());
 			} else {
 				setClause.append(GenericDaoConstants.COMMA + GenericDaoConstants.SPACE);
 			}
 			if (value != null) {
 				setClause.append(colName)
-					.append(GenericDaoConstants.EQUALS + GenericDaoConstants.APOSTROPHE)
+					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.APOSTROPHE)
 					.append(value)
 					.append(GenericDaoConstants.APOSTROPHE);
 			} else {
 				setClause.append(colName)
-					.append(GenericDaoConstants.EQUALS + GenericDaoConstants.COLON)
+					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.COLON)
 					.append(colName);
 			}
 		}
@@ -701,7 +566,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		if (csvSqlString == null || csvSqlString.isEmpty()) {
 			return null;
 		}
-		csvSqlString = new StringBuilder(GenericDaoConstants.IN + GenericDaoConstants.OPEN_PARANTHESIS)
+		csvSqlString = new StringBuilder(WhereClauseBuilder.TOKENS.IN + GenericDaoConstants.OPEN_PARANTHESIS)
 				.append(csvSqlString)
 				.append(GenericDaoConstants.CLOSE_PARANTHESIS)
 				.toString();
@@ -838,10 +703,10 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	private String sanitizeWhereClauseForNullCriteria(String sql, Map<String, Object> paramasMap) {
 		String tempSql = sql.toLowerCase();
-		if (!tempSql.contains(GenericDaoConstants.WHERE)) {
+		if (!tempSql.contains(WhereClauseBuilder.TOKENS.WHERE.toString())) {
 			return sql;
 		}
-		int idx = tempSql.indexOf(GenericDaoConstants.WHERE) + 7;
+		int idx = tempSql.indexOf(WhereClauseBuilder.TOKENS.WHERE.toString()) + 7;
 		String selectClause = sql.substring(0, idx);
 		String whereClause = sql.substring(idx).trim();
 		if (!whereClause.contains(GenericDaoConstants.COLON)) {
@@ -857,8 +722,9 @@ public abstract class AbstractDaoImpl implements BaseDao {
 			}
 			String leadSql = whereClause.substring(0, idx).trim();
 			if (paramasMap.get(namedParam) == null) {
-				if (leadSql.endsWith(GenericDaoConstants.EQUALS)) {
-					leadSql = leadSql.substring(0, leadSql.length() - 2).concat(GenericDaoConstants.IS);
+				if (leadSql.endsWith(WhereClauseBuilder.TOKENS.EQUALS.toString())) {
+					leadSql = leadSql.substring(0, leadSql.length() - 2)
+							.concat(WhereClauseBuilder.TOKENS.IS.toString());
 				}
 			}
 			whereClause = leadSql.concat(whereClause.substring(idx));
@@ -913,25 +779,5 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		return jdbcInsert;
 	}
 
-	/**
-	 * Contains ignore case.
-	 *
-	 * @param values the values
-	 * @param searchStr the search str
-	 * @return true, if successful
-	 */
-	private boolean containsIgnoreCase(List<String> values, String searchStr) {
-		if (values == null && searchStr == null) {
-			return true;
-		}
-		if (values == null || values.isEmpty() || searchStr == null) {
-			return false;
-		}
-		for (String value : values) {
-			if (value.equalsIgnoreCase(searchStr)) {
-				return true;
-			}
-		}
-		return false;
-	}
+
 }
