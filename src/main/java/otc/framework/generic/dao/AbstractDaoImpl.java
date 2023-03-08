@@ -468,7 +468,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public <T> T executeNamedQuery(String sql, Map<String, Object> paramMap, ResultSetExtractor<T> rse) {
-		sql = sanitizeWhereClauseForNullCriteria(sql, paramMap);
+//		sql = sanitizeWhereClauseForNullCriteria(sql, paramMap);
 		return namedJdbcTemplate.query(sql, paramMap, rse);
 	}
 
@@ -522,9 +522,9 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @param colName the col name
 	 * @return the string builder
 	 */
-	protected StringBuilder buildSetClause(StringBuilder setClause, String colName) {
-		return buildSetClause(setClause, colName, null);
-	}
+//	protected StringBuilder buildSetClause(StringBuilder setClause, String colName) {
+//		return buildSetClause(setClause, colName, null);
+//	}
 
 	/**
 	 * Builds the set clause.
@@ -534,44 +534,44 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @param value the value
 	 * @return the string builder
 	 */
-	protected StringBuilder buildSetClause(StringBuilder setClause, String colName, String value) {
-		if (colName != null) {
-			if (setClause == null) {
-				setClause = new StringBuilder(WhereClauseBuilder.TOKENS.SET.toString());
-			} else {
-				setClause.append(GenericDaoConstants.COMMA + GenericDaoConstants.SPACE);
-			}
-			if (value != null) {
-				setClause.append(colName)
-					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.APOSTROPHE)
-					.append(value)
-					.append(GenericDaoConstants.APOSTROPHE);
-			} else {
-				setClause.append(colName)
-					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.COLON)
-					.append(colName);
-			}
-		}
-		return setClause;
-	}
-
-	/**
-	 * Builds the in clause.
-	 *
-	 * @param lstValues the lst values
-	 * @return the string
-	 */
-	protected String buildInClause(List<String> lstValues) {
-		String csvSqlString = buildCsvSqlString(lstValues);
-		if (csvSqlString == null || csvSqlString.isEmpty()) {
-			return null;
-		}
-		csvSqlString = new StringBuilder(WhereClauseBuilder.TOKENS.IN + GenericDaoConstants.OPEN_PARANTHESIS)
-				.append(csvSqlString)
-				.append(GenericDaoConstants.CLOSE_PARANTHESIS)
-				.toString();
-		return csvSqlString;
-	}
+//	protected StringBuilder buildSetClause(StringBuilder setClause, String colName, String value) {
+//		if (colName != null) {
+//			if (setClause == null) {
+//				setClause = new StringBuilder(WhereClauseBuilder.TOKENS.SET.toString());
+//			} else {
+//				setClause.append(GenericDaoConstants.COMMA + GenericDaoConstants.SPACE);
+//			}
+//			if (value != null) {
+//				setClause.append(colName)
+//					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.APOSTROPHE)
+//					.append(value)
+//					.append(GenericDaoConstants.APOSTROPHE);
+//			} else {
+//				setClause.append(colName)
+//					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.COLON)
+//					.append(colName);
+//			}
+//		}
+//		return setClause;
+//	}
+//
+//	/**
+//	 * Builds the in clause.
+//	 *
+//	 * @param lstValues the lst values
+//	 * @return the string
+//	 */
+//	protected String buildInClause(List<String> lstValues) {
+//		String csvSqlString = buildCsvSqlString(lstValues);
+//		if (csvSqlString == null || csvSqlString.isEmpty()) {
+//			return null;
+//		}
+//		csvSqlString = new StringBuilder(WhereClauseBuilder.TOKENS.IN + GenericDaoConstants.OPEN_PARANTHESIS)
+//				.append(csvSqlString)
+//				.append(GenericDaoConstants.CLOSE_PARANTHESIS)
+//				.toString();
+//		return csvSqlString;
+//	}
 
 	/**
 	 * Builds the csv sql string.
@@ -701,37 +701,37 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @param paramasMap the paramas map
 	 * @return the string
 	 */
-	private String sanitizeWhereClauseForNullCriteria(String sql, Map<String, Object> paramasMap) {
-		String tempSql = sql.toLowerCase();
-		if (!tempSql.contains(WhereClauseBuilder.TOKENS.WHERE.toString())) {
-			return sql;
-		}
-		int idx = tempSql.indexOf(WhereClauseBuilder.TOKENS.WHERE.toString()) + 7;
-		String selectClause = sql.substring(0, idx);
-		String whereClause = sql.substring(idx).trim();
-		if (!whereClause.contains(GenericDaoConstants.COLON)) {
-			return sql;
-		}
-		idx = whereClause.indexOf(GenericDaoConstants.COLON);
-		while (idx >= 0) {
-			String namedParam = null;
-			if (whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2) > 0) {
-				namedParam = whereClause.substring(idx + 1, whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2));
-			} else {
-				namedParam = whereClause.substring(idx + 1);
-			}
-			String leadSql = whereClause.substring(0, idx).trim();
-			if (paramasMap.get(namedParam) == null) {
-				if (leadSql.endsWith(WhereClauseBuilder.TOKENS.EQUALS.toString())) {
-					leadSql = leadSql.substring(0, leadSql.length() - 2)
-							.concat(WhereClauseBuilder.TOKENS.IS.toString());
-				}
-			}
-			whereClause = leadSql.concat(whereClause.substring(idx));
-			idx = whereClause.indexOf(GenericDaoConstants.COLON, idx + namedParam.length());
-		}
-		return selectClause.concat(whereClause);
-	}
+//	private String sanitizeWhereClauseForNullCriteria(String sql, Map<String, Object> paramasMap) {
+//		String tempSql = sql.toLowerCase();
+//		if (!tempSql.contains(WhereClauseBuilder.TOKENS.WHERE.toString())) {
+//			return sql;
+//		}
+//		int idx = tempSql.indexOf(WhereClauseBuilder.TOKENS.WHERE.toString()) + 7;
+//		String selectClause = sql.substring(0, idx);
+//		String whereClause = sql.substring(idx).trim();
+//		if (!whereClause.contains(GenericDaoConstants.COLON)) {
+//			return sql;
+//		}
+//		idx = whereClause.indexOf(GenericDaoConstants.COLON);
+//		while (idx >= 0) {
+//			String namedParam = null;
+//			if (whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2) > 0) {
+//				namedParam = whereClause.substring(idx + 1, whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2));
+//			} else {
+//				namedParam = whereClause.substring(idx + 1);
+//			}
+//			String leadSql = whereClause.substring(0, idx).trim();
+//			if (paramasMap.get(namedParam) == null) {
+//				if (leadSql.endsWith(WhereClauseBuilder.TOKENS.EQUALS.toString())) {
+//					leadSql = leadSql.substring(0, leadSql.length() - 2)
+//							.concat(WhereClauseBuilder.TOKENS.IS.toString());
+//				}
+//			}
+//			whereClause = leadSql.concat(whereClause.substring(idx));
+//			idx = whereClause.indexOf(GenericDaoConstants.COLON, idx + namedParam.length());
+//		}
+//		return selectClause.concat(whereClause);
+//	}
 
 	/**
 	 * Creates the simple jdbc insert.
@@ -778,6 +778,4 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		SimpleJdbcInsert jdbcInsert = createSimpleJdbcInsert(schema, table, columnNames, generatedKeyNames);
 		return jdbcInsert;
 	}
-
-
 }

@@ -19,4 +19,10 @@ public class Utility {
         return;
     }
 
+    public static void validateTableName(String tableName) {
+        if (null == tableName || tableName.trim().equals("")) {
+            throw new GenericDaoValidationException("Table name cannot be empty.");
+        }
+    }
+
 }

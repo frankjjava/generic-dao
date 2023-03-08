@@ -15,7 +15,7 @@ public interface GenericDaoConstants {
 	/** The Constant EQUALS. */
 
 	/** The Constant COMMA. */
-	String COMMA = ",:";
+	String COMMA = ",";
 	
 	/** The Constant COLON. */
 	String COLON = ":";
