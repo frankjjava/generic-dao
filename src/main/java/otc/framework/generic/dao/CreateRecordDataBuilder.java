@@ -5,17 +5,17 @@ import otc.framework.generic.dao.exception.GenericDaoException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DbRecordDataBuilder {
+public class CreateRecordDataBuilder {
 
     private Map<String, Object> params;
 
-    private DbRecordDataBuilder() {}
+    private CreateRecordDataBuilder() {}
 
-    public static DbRecordDataBuilder createInstance() {
-        return new DbRecordDataBuilder();
+    public static CreateRecordDataBuilder createInstance() {
+        return new CreateRecordDataBuilder();
     }
 
-    public <T> DbRecordDataBuilder addColumData(String columnName, T columnData) {
+    public <T> CreateRecordDataBuilder addColumData(String columnName, T columnData) {
         if (columnName == null || columnName.trim().equals("")) {
             throw new GenericDaoException("Column-name cannot be null or empty !");
         }
