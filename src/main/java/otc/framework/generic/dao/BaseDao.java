@@ -45,6 +45,9 @@ public interface BaseDao {
 
 	String SELECT = "SELECT ";
 	String FROM = " FROM ";
+	String UPDATE = "UPDATE ";
+	String DELETE = "DELETE ";
+	String SET = " SET ";
 
 	/** The column status. */
 	String COLUMN_NAME_STATUS = "STATUS";
@@ -201,7 +204,7 @@ public interface BaseDao {
 	 * @param rowMapper the row mapper
 	 * @return the t
 	 */
-	public abstract <T> T executeForObject(String query, Object[] params, RowMapper<T> rowMapper);
+	public abstract <T> T executeQueryForObject(String query, Object[] params, RowMapper<T> rowMapper);
 
 	/**
 	 * Execute query.
@@ -307,7 +310,7 @@ public interface BaseDao {
 	 * @param type the type
 	 * @return the object
 	 */
-	public abstract <T> Object executeForObject(String query, Object[] params, int[] types, Class<T> type);
+	public abstract <T> Object executeQueryForObject(String query, Object[] params, int[] types, Class<T> type);
 
 	/**
 	 * Execute named query for obj.

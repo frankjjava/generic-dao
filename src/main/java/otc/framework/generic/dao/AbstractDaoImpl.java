@@ -353,7 +353,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @return the t
 	 */
 	@Override
-	public <T> T executeForObject(String query, Object[] params, RowMapper<T> rowMapper) {
+	public <T> T executeQueryForObject(String query, Object[] params, RowMapper<T> rowMapper) {
 		return jdbcTemplate.queryForObject(query, params, rowMapper);
 	}
 
@@ -384,37 +384,32 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	/**
 	 * Execute update.
 	 *
-	 * @param query the query
+	 * @param sql the query
 	 * @param params the params
 	 * @return the int
 	 */
 	@Override
-	public int executeUpdate(String query, Object[] params) {
-		return jdbcTemplate.update(query, params);
+	public int executeUpdate(String sql, Object[] params) {
+		return jdbcTemplate.update(sql, params);
 	}
 
 	/**
 	 * Execute update.
 	 *
-	 * @param query the query
+	 * @param sql the query
 	 * @param pss the pss
 	 * @return the int
 	 */
 	@Override
-	public int executeUpdate(String query, PreparedStatementSetter pss) {
-		return jdbcTemplate.update(query, pss);
+	public int executeUpdate(String sql, PreparedStatementSetter pss) {
+		return jdbcTemplate.update(sql, pss);
 	}
 
 	/**
-	 * Execute update for named sql.
 	 *
 	 * @param sql the sql
 	 * @param params the params
-	 * @return the int
-	 */
-	/*
-	 * @Override public int executeUpdate(String query, Object[] params, int[]
-	 * types) { return jdbcTemplate.update(query, params, types); }
+	 * @return
 	 */
 	@Override
 	public int executeUpdateForNamedSql(String sql, SqlParameterSource params) {
@@ -424,13 +419,13 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	/**
 	 * Execute batch update.
 	 *
-	 * @param query the query
+	 * @param sql the query
 	 * @param objArr the obj arr
 	 * @return the int[]
 	 */
 	@Override
-	public int[] executeBatchUpdate(String query, List<Object[]> objArr) {
-		return jdbcTemplate.batchUpdate(query, objArr);
+	public int[] executeBatchUpdate(String sql, List<Object[]> objArr) {
+		return jdbcTemplate.batchUpdate(sql, objArr);
 	}
 
 	/**
@@ -497,7 +492,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 * @return the object
 	 */
 	@Override
-	public <T> Object executeForObject(String query, Object[] params, int[] types, Class<T> type) {
+	public <T> Object executeQueryForObject(String query, Object[] params, int[] types, Class<T> type) {
 		return jdbcTemplate.queryForObject(query, params, types, type);
 	}
 

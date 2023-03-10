@@ -6,15 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CreateRecordDataBuilder {
-
     private Map<String, Object> params;
-
     private CreateRecordDataBuilder() {}
-
     public static CreateRecordDataBuilder createInstance() {
         return new CreateRecordDataBuilder();
     }
-
     public <T> CreateRecordDataBuilder addColumData(String columnName, T columnData) {
         if (columnName == null || columnName.trim().equals("")) {
             throw new GenericDaoException("Column-name cannot be null or empty !");
@@ -28,7 +24,6 @@ public class CreateRecordDataBuilder {
         params.put(columnName, columnData);
         return this;
     }
-
     public Map<String, Object> build() {
         return params;
     }
