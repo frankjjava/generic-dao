@@ -50,7 +50,7 @@ public class UpdateStatementBuilder extends WhereClauseBuilder {
             return null;
         }
         if (LEVEL.SET_ADDED != level && LEVEL.CONDITION_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Update statement not created in required state for call to build() "));
+            throw new GenericDaoBuilderException(String.format("Update statement created not in a required state for call to build() "));
         }
         if (LEVEL.SET_ADDED == level) {
             return updateStatement.toString();
