@@ -31,7 +31,7 @@ public class DeleteStatementBuilder extends WhereClauseBuilder {
             return null;
         }
         if (LEVEL.TABLENAME_ADDED != level && LEVEL.CONDITION_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Query not created in required state for call to build() "));
+            throw new GenericDaoBuilderException(String.format("Delete statement created not in a required state for call to build() "));
         }
         if (LEVEL.TABLENAME_ADDED == level) {
             return deleteStatement.toString();

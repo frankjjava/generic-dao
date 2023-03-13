@@ -67,7 +67,7 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
 
     public SelectQueryBuilder where() {
         if (LEVEL.FROM_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Query not created in required state for call to where() "));
+            throw new GenericDaoBuilderException(String.format("Query created not in a required state for call to where() "));
         }
         level = LEVEL.WHERE_ADDED;
         return this;
