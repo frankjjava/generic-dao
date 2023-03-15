@@ -16,8 +16,7 @@ public class UpdateStatementBuilder extends WhereClauseBuilder {
 
     public UpdateStatementBuilder updateTable(String tableName) {
         if (null != level) {
-            throw new GenericDaoBuilderException(String.format("Invalid repeat-call to 'updateTable(%s)' not allowed. " +
-                    "Call updateTable(...) first", tableName));
+            throw new GenericDaoBuilderException(String.format("Repeat call to 'updateTable(%s)' is not allowed. ", tableName));
         }
         Utility.validateTableName(tableName);
         initUpdateClause();
@@ -27,11 +26,15 @@ public class UpdateStatementBuilder extends WhereClauseBuilder {
     }
 
     public <T> UpdateStatementBuilder setColumn(String columnName, T columnValue) {
-        if (LEVEL.TABLENAME_ADDED != level) {
+        if (null == level) {
             throw new GenericDaoBuilderException(String.format("Call to 'setColumn(%s)' not in the right sequence. " +
                     "Call updateTable(...) first", columnName));
         }
-        Utility.validate(columnName);
+        if (LEVEL.WHERE_ADDED == level || LEVEL.CONDITION_ADDED == level) {
+            throw new GenericDaoBuilderException(String.format("Update statement created not in required state for call setColumn(%s, %s)",
+                    columnName, columnValue));
+        }
+        Utility.validate(columnName, columnValue);
         if (!initUpdateClause()) {
             updateStatement.append(GenericDaoConstants.COMMA);
         }
@@ -69,6 +72,9 @@ public class UpdateStatementBuilder extends WhereClauseBuilder {
     public UpdateStatementBuilder where() {
         if (LEVEL.SET_ADDED != level) {
             throw new GenericDaoBuilderException(String.format("Query not created in required state for call to where() "));
+        }
+        if (level == LEVEL.WHERE_ADDED) {
+            throw new GenericDaoBuilderException("Repeat call to 'where()' is not allowed ");
         }
         level = LEVEL.WHERE_ADDED;
         return this;
@@ -170,14 +176,14 @@ public class UpdateStatementBuilder extends WhereClauseBuilder {
     }
 
     private boolean isWhereCalled() {
-        if (level != LEVEL.WHERE_ADDED) {
+        if (LEVEL.WHERE_ADDED != level && LEVEL.CONDITION_ADDED != level) {
             throw new GenericDaoBuilderException(String.format("Query created not in required state for call to this method "));
         }
         return true;
     }
 
     private boolean isConditionAdded() {
-        if (level != LEVEL.CONDITION_ADDED) {
+        if (LEVEL.CONDITION_ADDED != level) {
             throw new GenericDaoBuilderException(String.format("Query created not in required state for call to this method "));
         }
         return true;

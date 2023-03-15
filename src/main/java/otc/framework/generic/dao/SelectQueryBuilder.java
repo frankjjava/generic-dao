@@ -1,12 +1,11 @@
 package otc.framework.generic.dao;
 
 import otc.framework.generic.dao.exception.GenericDaoBuilderException;
-import otc.framework.generic.dao.exception.GenericDaoException;
-import otc.framework.generic.dao.exception.GenericDaoValidationException;
 
 public class SelectQueryBuilder extends WhereClauseBuilder {
 
     private enum LEVEL {COLUMN_ADDED, FROM_ADDED, WHERE_ADDED, CONDITION_ADDED}
+
     private LEVEL level;
     private StringBuilder selectClause;
 
@@ -49,7 +48,7 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
             return null;
         }
         if (LEVEL.COLUMN_ADDED == level || LEVEL.WHERE_ADDED == level) {
-            throw new GenericDaoBuilderException(String.format("Query not created in required state for call to build() "));
+            throw new GenericDaoBuilderException("Query not created in required state for call to build() ");
         }
         if (LEVEL.FROM_ADDED == level) {
             return selectClause.toString();
@@ -69,10 +68,10 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
 
     public SelectQueryBuilder where() {
         if (LEVEL.FROM_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Query created not in a required state for call to where() "));
+            throw new GenericDaoBuilderException("Query created not in a required state for call to where() ");
         }
         if (level == LEVEL.WHERE_ADDED) {
-            throw new GenericDaoBuilderException(String.format("Repeat call to 'where()' is not allowed "));
+            throw new GenericDaoBuilderException("Repeat call to 'where()' is not allowed ");
         }
         level = LEVEL.WHERE_ADDED;
         return this;
@@ -187,14 +186,14 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
 
     private boolean isWhereCalled() {
         if (LEVEL.WHERE_ADDED != level && LEVEL.CONDITION_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Query created not in required state for call to this method "));
+            throw new GenericDaoBuilderException("Query created not in required state for call to this method ");
         }
         return true;
     }
 
     private boolean isConditionAdded() {
         if (LEVEL.CONDITION_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Query created not in required state for call to this method "));
+            throw new GenericDaoBuilderException("Query created not in required state for call to this method ");
         }
         return true;
     }
