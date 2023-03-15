@@ -384,25 +384,25 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	/**
 	 * Execute update.
 	 *
-	 * @param sql the query
+	 * @param query the query
 	 * @param params the params
 	 * @return the int
 	 */
 	@Override
-	public int executeUpdate(String sql, Object[] params) {
-		return jdbcTemplate.update(sql, params);
+	public int executeUpdate(String query, Object[] params) {
+		return jdbcTemplate.update(query, params);
 	}
 
 	/**
 	 * Execute update.
 	 *
-	 * @param sql the query
+	 * @param query the query
 	 * @param pss the pss
 	 * @return the int
 	 */
 	@Override
-	public int executeUpdate(String sql, PreparedStatementSetter pss) {
-		return jdbcTemplate.update(sql, pss);
+	public int executeUpdate(String query, PreparedStatementSetter pss) {
+		return jdbcTemplate.update(query, pss);
 	}
 
 	/**
@@ -419,13 +419,13 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	/**
 	 * Execute batch update.
 	 *
-	 * @param sql the query
+	 * @param query the query
 	 * @param objArr the obj arr
 	 * @return the int[]
 	 */
 	@Override
-	public int[] executeBatchUpdate(String sql, List<Object[]> objArr) {
-		return jdbcTemplate.batchUpdate(sql, objArr);
+	public int[] executeBatchUpdate(String query, List<Object[]> objArr) {
+		return jdbcTemplate.batchUpdate(query, objArr);
 	}
 
 	/**

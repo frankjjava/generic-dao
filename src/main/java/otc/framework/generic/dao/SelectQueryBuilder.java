@@ -35,7 +35,7 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
                     "Call addColumn(...) first", tableName));
         }
         if (level == LEVEL.FROM_ADDED) {
-            throw new GenericDaoBuilderException(String.format("Repeat call to 'from(%s)' not allowed ", tableName));
+            throw new GenericDaoBuilderException(String.format("Repeat call to 'from(%s)' is not allowed ", tableName));
         }
         Utility.validateTableName(tableName);
         selectClause.append(BaseDao.FROM)
@@ -48,13 +48,15 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
         if (selectClause == null) {
             return null;
         }
-        if (LEVEL.FROM_ADDED != level && LEVEL.CONDITION_ADDED != level) {
+        if (LEVEL.COLUMN_ADDED == level || LEVEL.WHERE_ADDED == level) {
             throw new GenericDaoBuilderException(String.format("Query not created in required state for call to build() "));
         }
         if (LEVEL.FROM_ADDED == level) {
             return selectClause.toString();
         }
-        return selectClause.append(super.build()).toString();
+        return selectClause.append(super.build())
+                .append(GenericDaoConstants.SEMI_COLON)
+                .toString();
     }
 
     private boolean initSelectClause() {
@@ -69,6 +71,9 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
         if (LEVEL.FROM_ADDED != level) {
             throw new GenericDaoBuilderException(String.format("Query created not in a required state for call to where() "));
         }
+        if (level == LEVEL.WHERE_ADDED) {
+            throw new GenericDaoBuilderException(String.format("Repeat call to 'where()' is not allowed "));
+        }
         level = LEVEL.WHERE_ADDED;
         return this;
     }
@@ -76,72 +81,84 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
     public <T> SelectQueryBuilder equals(String columnName, T columnValue) {
         isWhereCalled();
         super.equals(columnName, columnValue);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder equalsNamedCriteria(String columnName) {
         isWhereCalled();
         super.equalsNamedCriteria(columnName);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder notEquals(String columnName, T columnValue) {
         isWhereCalled();
         super.notEquals(columnName, columnValue);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder notEqualsNamedCriteria(String columnName) {
         isWhereCalled();
         super.notEqualsNamedCriteria(columnName);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder greaterThan(String columnName, T columnValue) {
         isWhereCalled();
         super.greaterThan(columnName, columnValue);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder greaterThanNamedCriteria(String columnName) {
         isWhereCalled();
         super.greaterThanNamedCriteria(columnName);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder greaterThanEquals(String columnName, T columnValue) {
         isWhereCalled();
         super.greaterThanEquals(columnName, columnValue);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder greaterThanEqualsNamedCriteria(String columnName) {
         isWhereCalled();
         super.greaterThanEqualsNamedCriteria(columnName);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder lessThan(String columnName, T columnValue) {
         isWhereCalled();
         super.lessThan(columnName, columnValue);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder lessThanNamedCriteria(String columnName) {
         isWhereCalled();
         super.lessThanNamedCriteria(columnName);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder lessThanEquals(String columnName, T columnValue) {
         isWhereCalled();
         super.lessThanEquals(columnName, columnValue);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
     public <T> SelectQueryBuilder lessThanEqualsNamedCriteria(String columnName) {
         isWhereCalled();
         super.lessThanEqualsNamedCriteria(columnName);
+        this.level = LEVEL.CONDITION_ADDED;
         return this;
     }
 
@@ -169,14 +186,14 @@ public class SelectQueryBuilder extends WhereClauseBuilder {
     }
 
     private boolean isWhereCalled() {
-        if (level != LEVEL.WHERE_ADDED) {
+        if (LEVEL.WHERE_ADDED != level && LEVEL.CONDITION_ADDED != level) {
             throw new GenericDaoBuilderException(String.format("Query created not in required state for call to this method "));
         }
         return true;
     }
 
     private boolean isConditionAdded() {
-        if (level != LEVEL.CONDITION_ADDED) {
+        if (LEVEL.CONDITION_ADDED != level) {
             throw new GenericDaoBuilderException(String.format("Query created not in required state for call to this method "));
         }
         return true;
