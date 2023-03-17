@@ -10,13 +10,13 @@ public class DeleteStatementBuilder extends WhereClauseBuilder {
 
     private DeleteStatementBuilder() {}
 
-    public static DeleteStatementBuilder createInstance() {
+    public static DeleteStatementBuilder newBuilder() {
         return new DeleteStatementBuilder();
     }
 
-    public DeleteStatementBuilder deleteTable(String tableName) {
+    public DeleteStatementBuilder from(String tableName) {
         if (null != level) {
-            throw new GenericDaoBuilderException(String.format("Repeat call to 'deleteTable(%s)' is not allowed. ", tableName));
+            throw new GenericDaoBuilderException(String.format("Repeat call to 'from(%s)' is not allowed. ", tableName));
         }
         Utility.validateTableName(tableName);
         initDeleteClause();
@@ -27,10 +27,11 @@ public class DeleteStatementBuilder extends WhereClauseBuilder {
 
     public String build() {
         if (deleteStatement == null) {
-            return null;
+            throw new GenericDaoBuilderException(String.format("Insert statement nothing to build(). level = %s", level));
         }
         if (LEVEL.TABLENAME_ADDED != level && LEVEL.CONDITION_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Delete statement created not in a required state for call to build() "));
+            throw new GenericDaoBuilderException(String.format(
+                    "Delete statement created not in a required state for call to build(). level = %s", level));
         }
         if (LEVEL.TABLENAME_ADDED == level) {
             return deleteStatement.toString();
@@ -49,10 +50,8 @@ public class DeleteStatementBuilder extends WhereClauseBuilder {
 
     public DeleteStatementBuilder where() {
         if (LEVEL.TABLENAME_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format("Delete statement not created in required state for call to where() "));
-        }
-        if (level == LEVEL.WHERE_ADDED) {
-            throw new GenericDaoBuilderException("Repeat call to 'where()' is not allowed ");
+            throw new GenericDaoBuilderException(String.format(
+                    "Delete statement not created in required state for call to where(). level = %s", level));
         }
         level = LEVEL.WHERE_ADDED;
         return this;

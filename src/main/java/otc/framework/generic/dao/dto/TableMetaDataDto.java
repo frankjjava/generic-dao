@@ -25,7 +25,7 @@ package otc.framework.generic.dao.dto;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
-import otc.framework.generic.dao.GenericDaoConstants;
+import otc.framework.generic.dao.BaseDao;
 
 import java.sql.Types;
 import java.util.Set;
@@ -126,26 +126,26 @@ public class TableMetaDataDto {
 		 */
 		public String getTypeName() {
 			if (type == TYPE.VARCHAR) {
-				return new StringBuilder(GenericDaoConstants.VARCHAR + GenericDaoConstants.CLOSE_PARANTHESIS)
+				return new StringBuilder(BaseDao.VARCHAR + BaseDao.CLOSE_PARANTHESIS)
 						.append(length)
-						.append(GenericDaoConstants.CLOSE_PARANTHESIS)
+						.append(BaseDao.CLOSE_PARANTHESIS)
 						.toString();
 			} else if (type.equals(TYPE.BYTE)) {
-				return GenericDaoConstants.TINYINT;
+				return BaseDao.TINYINT;
 			} else if (type.equals(TYPE.SHORT)) {
-				return GenericDaoConstants.SMALLINT;
+				return BaseDao.SMALLINT;
 			} else if (type.equals(TYPE.INT)) {
-				return GenericDaoConstants.INTEGER;
+				return BaseDao.INTEGER;
 			} else if (type.equals(TYPE.LONG)) {
-				return GenericDaoConstants.BIGINT;
+				return BaseDao.BIGINT;
 			} else if (type.equals(TYPE.FLOAT)) {
-				return GenericDaoConstants.REAL;
+				return BaseDao.REAL;
 			} else if (type.equals(TYPE.DOUBLE)) {
-				return GenericDaoConstants.DOUBLE;
+				return BaseDao.DOUBLE;
 			} else if (type.equals(TYPE.DATE)) {
-				return GenericDaoConstants.DATE;
+				return BaseDao.DATE;
 			} else if (type.equals(TYPE.TIMESTAMP)) {
-				return GenericDaoConstants.TIMESTAMP;
+				return BaseDao.TIMESTAMP;
 			}
 			return null;
 		}

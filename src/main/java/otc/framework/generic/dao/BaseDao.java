@@ -22,7 +22,6 @@
 */
 package otc.framework.generic.dao;
 
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
@@ -43,11 +42,15 @@ public interface BaseDao {
 	/** The nanos in one milli. */
 	long NANOS_IN_ONE_MILLI = 1000000;
 
+	String INSERT_INTO = "INSERT INTO ";
 	String SELECT = "SELECT ";
 	String FROM = " FROM ";
 	String UPDATE = "UPDATE ";
 	String DELETE = "DELETE ";
 	String SET = " SET ";
+	String VALUES = " VALUES (";
+	String ON_CONFLICT = " ON CONFLICT (";
+	String DO_UPDATE_SET = " DO UPDATE SET ";
 
 	/** The column status. */
 	String COLUMN_NAME_STATUS = "STATUS";
@@ -63,6 +66,72 @@ public interface BaseDao {
 	
 	/** The column updated by. */
 	String COLUMN_UPDATED_BY = "updated_by";
+
+	/** The Constant SPACE. */
+	String SPACE = " ";
+
+	/** The Constant APOSTROPHE. */
+	String QUESTION = "?";
+	String APOSTROPHE = "'";
+
+	/** The Constant EQUALS. */
+
+	/** The Constant COMMA. */
+	String COMMA = ", ";
+
+	/** The Constant COLON. */
+	String COLON = ":";
+
+	/** The Constant SEMI_COLON. */
+	String SEMI_COLON = ";";
+
+	/** The Constant ASTERISK. */
+	String ASTERISK = "*";
+
+	/** The Constant OPEN_PARANTHESIS. */
+	String OPEN_PARANTHESIS = " (";
+
+	/** The Constant CLOSE_PARANTHESIS. */
+	String CLOSE_PARANTHESIS = ") ";
+
+	/** The tinyint. */
+	String TINYINT = "TINYINT";
+
+	/** The smallint. */
+	String SMALLINT = "SMALLINT";
+
+	/** The integer. */
+	String INTEGER = "INTEGER";
+
+	/** The bigint. */
+	String BIGINT = "BIGINT";
+
+	/** The real. */
+	String REAL = "REAL";
+
+	/** The double. */
+	String DOUBLE = "DOUBLE";
+
+	/** The date. */
+	String DATE = "DATE";
+
+	/** The timestamp. */
+	String TIMESTAMP = "TIMESTAMP";
+
+	/** The Constant WHERE. */
+	String VARCHAR = "varchar";
+
+	/** The Constant CREATE_TABLE. */
+	String CREATE_TABLE = "CREATE TABLE";
+
+	/** The Constant PRIMARY_KEY. */
+	String PRIMARY_KEY = "PRIMARY KEY";
+
+	/** The Constant SELECT. */
+
+	/** The Constant NEXTVAL_FROM_DUAL. */
+	String NEXTVAL_FROM_DUAL = ".NEXTVAL FROM DUAL";
+
 	/**
 	 * Checks if is table exists.
 	 *
@@ -269,7 +338,9 @@ public interface BaseDao {
 	 */
 	public abstract int[] executeNamedBatchUpdate(String sql, SqlParameterSource[] params);
 
-	/**
+    int[] executeNamedBatchUpdate(String sql, Map<String, Object>[] params);
+
+    /**
 	 * Execute named update.
 	 *
 	 * @param sql the sql
@@ -278,7 +349,17 @@ public interface BaseDao {
 	 */
 	public abstract int executeNamedUpdate(String sql, Map<String, ?> paramMap);
 
-	/**
+    int executeDelete(String sql);
+
+    int executeDelete(String query, Object[] params);
+
+    int executeDelete(String query, PreparedStatementSetter pss);
+
+    int executeDeleteForNamedSql(String sql, SqlParameterSource params);
+
+    int executeNamedDelete(String sql, Map<String, ?> paramMap);
+
+    /**
 	 * Execute named query.
 	 *
 	 * @param <T> the generic type
@@ -323,11 +404,4 @@ public interface BaseDao {
 	 */
 	public abstract <T> Object executeNamedQueryForObj(String sql, Map<String, ?> paramMap, Class<T> requiredType);
 
-/**
- * Sets the jdbc template.
- *
- * @param jdbcTemplate the new jdbc template
- */
-//	public abstract int executeUpdate(String query, Object[] params, int[] types);
-	void setJdbcTemplate(JdbcTemplate jdbcTemplate);
 }

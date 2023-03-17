@@ -39,7 +39,6 @@ import otc.framework.generic.dao.dto.TableMetaDataDto.ColumnMetaDataDto;
 import otc.framework.generic.dao.dto.TableMetaDataDto.ColumnMetaDataDto.CONSTRAINTS;
 import otc.framework.generic.dao.exception.GenericDaoException;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -69,6 +68,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	protected JdbcTemplate jdbcTemplate;
 	
 	/** The named jdbc template. */
+	@Autowired
 	protected NamedParameterJdbcTemplate namedJdbcTemplate;
 
 	static {
@@ -94,27 +94,27 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	/**
 	 * Inits the.
 	 */
-	@PostConstruct
-	public void init() {
-		if (dataSource == null) {
-			throw new GenericDaoException("Datasource is not injected. " +
-					"Create managed-bean of Datasource to have it auto-wired !");
-		}
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		setJdbcTemplate(jdbcTemplate);
-	}
-
-	/**
-	 * Sets the jdbc template.
-	 *
-	 * @param jdbcTemplate the new jdbc template
-	 */
-	@Override
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-	}
-
+//	@PostConstruct
+//	public void init() {
+//		if (dataSource == null) {
+//			throw new GenericDaoException("Datasource is not injected. " +
+//					"Create managed-bean of Datasource to have it auto-wired !");
+//		}
+//		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+//		setJdbcTemplate(jdbcTemplate);
+//	}
+//
+//	/**
+//	 * Sets the jdbc template.
+//	 *
+//	 * @param jdbcTemplate the new jdbc template
+//	 */
+//	@Override
+//	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+//		this.jdbcTemplate = jdbcTemplate;
+//		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+//	}
+//
 	/**
 	 * Checks if is table exists.
 	 *
@@ -150,23 +150,23 @@ public abstract class AbstractDaoImpl implements BaseDao {
 		StringBuilder sql = null;
 		for (ColumnMetaDataDto columnMetaDataDto : tableMetaDataDto.getColumns()) {
 			if (sql == null) {
-				sql = new StringBuilder(GenericDaoConstants.CREATE_TABLE).append(tableMetaDataDto.getTableName());
+				sql = new StringBuilder(CREATE_TABLE).append(tableMetaDataDto.getTableName());
 			} else {
-				sql.append(GenericDaoConstants.COMMA);
+				sql.append(COMMA);
 			}
 			sql.append(columnMetaDataDto.getColumnName())
-				.append(GenericDaoConstants.SPACE)
+				.append(SPACE)
 				.append(columnMetaDataDto.getTypeName());
 			Set<CONSTRAINTS> constraints = columnMetaDataDto.getConstraints();
 			if (constraints != null && !constraints.isEmpty()) {
 				for (CONSTRAINTS constraint : constraints) {
 					if (constraint == CONSTRAINTS.PRIMARY_KEY) {
-						sql.append(GenericDaoConstants.SPACE + GenericDaoConstants.PRIMARY_KEY);
+						sql.append(SPACE + PRIMARY_KEY);
 					}
 				}
 			}
 		}
-		sql.append(GenericDaoConstants.SEMI_COLON);
+		sql.append(SEMI_COLON);
 		jdbcTemplate.execute(sql.toString());
 		return true;
 	}
@@ -179,9 +179,9 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public long fetchNextSeqValue(String seqName) {
-		String sql = GenericDaoConstants.SELECT
+		String sql = SELECT
 					.concat(seqName)
-					.concat(GenericDaoConstants.NEXTVAL_FROM_DUAL);
+					.concat(NEXTVAL_FROM_DUAL);
 		return jdbcTemplate.queryForObject(sql, Long.class);
 	}
 
@@ -413,7 +413,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public int executeUpdateForNamedSql(String sql, SqlParameterSource params) {
-		return jdbcTemplate.update(sql, params);
+		return namedJdbcTemplate.update(sql, params);
 	}
 
 	/**
@@ -441,6 +441,17 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	}
 
 	/**
+	 *
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	@Override
+	public int[] executeNamedBatchUpdate(String sql, Map<String, Object>[] params) {
+		return namedJdbcTemplate.batchUpdate(sql, params);
+	}
+
+	/**
 	 * Execute named update.
 	 *
 	 * @param sql the sql
@@ -449,6 +460,60 @@ public abstract class AbstractDaoImpl implements BaseDao {
 	 */
 	@Override
 	public int executeNamedUpdate(String sql, Map<String, ?> paramMap) {
+		return namedJdbcTemplate.update(sql, paramMap);
+	}
+
+	/**
+	 *
+	 * @param sql
+	 * @return
+	 */
+	@Override
+	public int executeDelete(String sql) {
+		return jdbcTemplate.update(sql);
+	}
+
+	/**
+	 *
+	 * @param query
+	 * @param params
+	 * @return
+	 */
+	@Override
+	public int executeDelete(String query, Object[] params) {
+		return jdbcTemplate.update(query, params);
+	}
+
+	/**
+	 *
+	 * @param query
+	 * @param pss
+	 * @return
+	 */
+	@Override
+	public int executeDelete(String query, PreparedStatementSetter pss) {
+		return jdbcTemplate.update(query, pss);
+	}
+
+	/**
+	 *
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	@Override
+	public int executeDeleteForNamedSql(String sql, SqlParameterSource params) {
+		return namedJdbcTemplate.update(sql, params);
+	}
+
+	/**
+	 *
+	 * @param sql
+	 * @param paramMap
+	 * @return
+	 */
+	@Override
+	public int executeNamedDelete(String sql, Map<String, ?> paramMap) {
 		return namedJdbcTemplate.update(sql, paramMap);
 	}
 
@@ -534,16 +599,16 @@ public abstract class AbstractDaoImpl implements BaseDao {
 //			if (setClause == null) {
 //				setClause = new StringBuilder(WhereClauseBuilder.TOKENS.SET.toString());
 //			} else {
-//				setClause.append(GenericDaoConstants.COMMA + GenericDaoConstants.SPACE);
+//				setClause.append(COMMA + SPACE);
 //			}
 //			if (value != null) {
 //				setClause.append(colName)
-//					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.APOSTROPHE)
+//					.append(WhereClauseBuilder.TOKENS.EQUALS + APOSTROPHE)
 //					.append(value)
-//					.append(GenericDaoConstants.APOSTROPHE);
+//					.append(APOSTROPHE);
 //			} else {
 //				setClause.append(colName)
-//					.append(WhereClauseBuilder.TOKENS.EQUALS + GenericDaoConstants.COLON)
+//					.append(WhereClauseBuilder.TOKENS.EQUALS + COLON)
 //					.append(colName);
 //			}
 //		}
@@ -561,9 +626,9 @@ public abstract class AbstractDaoImpl implements BaseDao {
 //		if (csvSqlString == null || csvSqlString.isEmpty()) {
 //			return null;
 //		}
-//		csvSqlString = new StringBuilder(WhereClauseBuilder.TOKENS.IN + GenericDaoConstants.OPEN_PARANTHESIS)
+//		csvSqlString = new StringBuilder(WhereClauseBuilder.TOKENS.IN + OPEN_PARANTHESIS)
 //				.append(csvSqlString)
-//				.append(GenericDaoConstants.CLOSE_PARANTHESIS)
+//				.append(CLOSE_PARANTHESIS)
 //				.toString();
 //		return csvSqlString;
 //	}
@@ -580,11 +645,11 @@ public abstract class AbstractDaoImpl implements BaseDao {
 			if (values == null) {
 				values = new StringBuilder();
 			} else {
-				values.append(GenericDaoConstants.COMMA);
+				values.append(COMMA);
 			}
-			values.append(GenericDaoConstants.APOSTROPHE)
+			values.append(APOSTROPHE)
 				.append(value)
-				.append(GenericDaoConstants.APOSTROPHE);
+				.append(APOSTROPHE);
 		}
 		return values.toString();
 	}
@@ -704,14 +769,14 @@ public abstract class AbstractDaoImpl implements BaseDao {
 //		int idx = tempSql.indexOf(WhereClauseBuilder.TOKENS.WHERE.toString()) + 7;
 //		String selectClause = sql.substring(0, idx);
 //		String whereClause = sql.substring(idx).trim();
-//		if (!whereClause.contains(GenericDaoConstants.COLON)) {
+//		if (!whereClause.contains(COLON)) {
 //			return sql;
 //		}
-//		idx = whereClause.indexOf(GenericDaoConstants.COLON);
+//		idx = whereClause.indexOf(COLON);
 //		while (idx >= 0) {
 //			String namedParam = null;
-//			if (whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2) > 0) {
-//				namedParam = whereClause.substring(idx + 1, whereClause.indexOf(GenericDaoConstants.SPACE, idx + 2));
+//			if (whereClause.indexOf(SPACE, idx + 2) > 0) {
+//				namedParam = whereClause.substring(idx + 1, whereClause.indexOf(SPACE, idx + 2));
 //			} else {
 //				namedParam = whereClause.substring(idx + 1);
 //			}
@@ -723,7 +788,7 @@ public abstract class AbstractDaoImpl implements BaseDao {
 //				}
 //			}
 //			whereClause = leadSql.concat(whereClause.substring(idx));
-//			idx = whereClause.indexOf(GenericDaoConstants.COLON, idx + namedParam.length());
+//			idx = whereClause.indexOf(COLON, idx + namedParam.length());
 //		}
 //		return selectClause.concat(whereClause);
 //	}

@@ -19,6 +19,14 @@ public class Utility {
         return;
     }
 
+    public static void validateColumnAndParamName(String columnName, String paramName) {
+        validate(columnName);
+        if (null == paramName || paramName.trim().equals("")) {
+            throw new GenericDaoValidationException("Param-name  cannot be empty.");
+        }
+        return;
+    }
+
     public static void validateTableName(String tableName) {
         if (null == tableName || tableName.trim().equals("")) {
             throw new GenericDaoValidationException("Table name cannot be empty.");

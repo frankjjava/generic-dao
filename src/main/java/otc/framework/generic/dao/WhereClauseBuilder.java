@@ -147,10 +147,10 @@ class WhereClauseBuilder {
         whereClause.append(columnName)
                 .append(TOKENS.BETWEEN)
                 .append(beginValue)
-                .append(GenericDaoConstants.APOSTROPHE + GenericDaoConstants.SPACE)
+                .append(BaseDao.APOSTROPHE + BaseDao.SPACE)
                 .append(LOGICAL_OPERATORS.AND)
-                .append(GenericDaoConstants.SPACE + GenericDaoConstants.APOSTROPHE)
-                .append(endValue).append(GenericDaoConstants.APOSTROPHE);
+                .append(BaseDao.SPACE + BaseDao.APOSTROPHE)
+                .append(endValue).append(BaseDao.APOSTROPHE);
 
         return this;
     }
@@ -184,7 +184,7 @@ class WhereClauseBuilder {
         initWhereClause();
         whereClause.append(columnName)
                 .append(relationalOperator)
-                .append(GenericDaoConstants.COLON)
+                .append(BaseDao.COLON)
                 .append(columnName);
     }
 
@@ -196,22 +196,22 @@ class WhereClauseBuilder {
             String value = ((String) columnValue).trim();
             if (value.equalsIgnoreCase(TOKENS.IS_NULL.label.trim())) {
                 whereClause.append(columnName).append(TOKENS.IS_NULL);
-            } else if (value.equalsIgnoreCase(GenericDaoConstants.ASTERISK) ||
+            } else if (value.equalsIgnoreCase(BaseDao.ASTERISK) ||
                     TOKENS.IS_NOT_NULL.label.trim().equals(value)) {
                 whereClause.append(columnName).append(TOKENS.IS_NOT_NULL);
             } else {
                 whereClause.append(columnName)
                         .append(relationalOperator)
-                        .append(GenericDaoConstants.APOSTROPHE)
+                        .append(BaseDao.APOSTROPHE)
                         .append(columnValue)
-                        .append(GenericDaoConstants.APOSTROPHE);
+                        .append(BaseDao.APOSTROPHE);
             }
         } else {
             whereClause.append(columnName)
                     .append(relationalOperator)
-                    .append(GenericDaoConstants.APOSTROPHE)
+                    .append(BaseDao.APOSTROPHE)
                     .append(columnValue)
-                    .append(GenericDaoConstants.APOSTROPHE);
+                    .append(BaseDao.APOSTROPHE);
         }
     }
 
@@ -240,35 +240,35 @@ class WhereClauseBuilder {
                                              List<String> ignoreCriteriaFields) {
         boolean isIgnoreFieldsContainsIgnoreCase = containsIgnoreCase(ignoreCriteriaFields, colName);
         if (whereClause == null) {
-            whereClause = new StringBuilder(GenericDaoConstants.WHERE);
-        } else if (!whereClause.toString().equals(GenericDaoConstants.WHERE)) {
+            whereClause = new StringBuilder(BaseDao.WHERE);
+        } else if (!whereClause.toString().equals(BaseDao.WHERE)) {
             if (logicalOperator != null && (ignoreCriteriaFields == null || !isIgnoreFieldsContainsIgnoreCase)) {
-                whereClause.append(GenericDaoConstants.SPACE)
+                whereClause.append(BaseDao.SPACE)
                         .append(logicalOperator.name())
-                        .append(GenericDaoConstants.SPACE);
+                        .append(BaseDao.SPACE);
             }
         }
         if (value != null && !isIgnoreFieldsContainsIgnoreCase) {
             value = value.trim();
-            if (value.equalsIgnoreCase(GenericDaoConstants.IS_NULL.trim())) {
-                whereClause.append(colName).append(GenericDaoConstants.IS_NULL);
-            } else if (value.equalsIgnoreCase(GenericDaoConstants.ASTERISK) ||
-                    GenericDaoConstants.IS_NOT_NULL.trim().equals(value)) {
-                whereClause.append(colName).append(GenericDaoConstants.IS_NOT_NULL);
+            if (value.equalsIgnoreCase(BaseDao.IS_NULL.trim())) {
+                whereClause.append(colName).append(BaseDao.IS_NULL);
+            } else if (value.equalsIgnoreCase(BaseDao.ASTERISK) ||
+                    BaseDao.IS_NOT_NULL.trim().equals(value)) {
+                whereClause.append(colName).append(BaseDao.IS_NOT_NULL);
             } else {
                 whereClause.append(colName)
                         .append(relationalOperator)
-                        .append(GenericDaoConstants.APOSTROPHE)
+                        .append(BaseDao.APOSTROPHE)
                         .append(value)
-                        .append(GenericDaoConstants.APOSTROPHE);
+                        .append(BaseDao.APOSTROPHE);
             }
         } else if (isUseNamedCriteria) {
             whereClause.append(colName)
                     .append(relationalOperator)
-                    .append(GenericDaoConstants.COLON)
+                    .append(BaseDao.COLON)
                     .append(colName);
         } else if (ignoreCriteriaFields == null || !isIgnoreFieldsContainsIgnoreCase) {
-            whereClause.append(colName).append(GenericDaoConstants.IS_NULL);
+            whereClause.append(colName).append(BaseDao.IS_NULL);
         }
         return whereClause;
     }
@@ -293,18 +293,18 @@ class WhereClauseBuilder {
             whereClause = new StringBuilder(TOKENS.WHERE.label);
         } else if (!whereClause.toString().equals(TOKENS.WHERE.label)) {
             if (logicalOperator != null) {
-                whereClause.append(GenericDaoConstants.SPACE)
+                whereClause.append(BaseDao.SPACE)
                         .append(logicalOperator.name())
-                        .append(GenericDaoConstants.SPACE);
+                        .append(BaseDao.SPACE);
             }
         }
         whereClause.append(columnName)
                 .append(TOKENS.BETWEEN.label)
                 .append(beginValue)
-                .append(GenericDaoConstants.APOSTROPHE + GenericDaoConstants.SPACE)
+                .append(BaseDao.APOSTROPHE + BaseDao.SPACE)
                 .append(LOGICAL_OPERATORS.AND)
-                .append(GenericDaoConstants.SPACE + GenericDaoConstants.APOSTROPHE)
-                .append(endValue).append(GenericDaoConstants.APOSTROPHE);
+                .append(BaseDao.SPACE + BaseDao.APOSTROPHE)
+                .append(endValue).append(BaseDao.APOSTROPHE);
         return whereClause;
     }
 
