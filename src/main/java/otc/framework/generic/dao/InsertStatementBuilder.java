@@ -6,13 +6,11 @@ public class InsertStatementBuilder extends WhereClauseBuilder {
 
     private StringBuilder insertStatement;
     private enum LEVEL {TABLENAME_ADDED, COLUMN_ADDED, VALUES_ADDED, VALUE_ADDED, WHERE_ADDED, CONDITION_ADDED,
-                ON_CONFLICT_COLUMNS_ADDED, DO_UPDATE_SET_ADDED, SET_ADDED}
+                SET_ADDED}
     private LEVEL level;
     private boolean hasWhereClause;
 
-    private int columnsAdded;
-
-    private InsertStatementBuilder() {}
+    InsertStatementBuilder() {}
 
     public static InsertStatementBuilder newBuilder() {
         return new InsertStatementBuilder();
@@ -64,7 +62,6 @@ public class InsertStatementBuilder extends WhereClauseBuilder {
         }
         insertStatement.append(columnName);
         level = LEVEL.COLUMN_ADDED;
-        columnsAdded++;
         return this;
     }
 
@@ -119,74 +116,6 @@ public class InsertStatementBuilder extends WhereClauseBuilder {
         }
         level = LEVEL.WHERE_ADDED;
         hasWhereClause = true;
-        return this;
-    }
-
-    public InsertStatementBuilder onConflict(String columnName) {
-        if (LEVEL.VALUE_ADDED != level && LEVEL.ON_CONFLICT_COLUMNS_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format(
-                    "Insert statement not in required state to call onConflict(%s). level = %s", columnName, level));
-        }
-        Utility.validate(columnName);
-        if (LEVEL.VALUE_ADDED == level) {
-            insertStatement.append(BaseDao.CLOSE_PARANTHESIS);
-            if (hasWhereClause) {
-                insertStatement.append(super.build());
-            }
-            insertStatement.append(BaseDao.ON_CONFLICT);
-        } else if (LEVEL.ON_CONFLICT_COLUMNS_ADDED == level) {
-            insertStatement.append(BaseDao.COMMA);
-        }
-        insertStatement.append(columnName);
-        level = LEVEL.ON_CONFLICT_COLUMNS_ADDED;
-        return this;
-    }
-
-    public InsertStatementBuilder doUpdateSet() {
-        if (LEVEL.ON_CONFLICT_COLUMNS_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format(
-                    "Insert statement not created in required state for call to doUpdateSet(). level = %s", level));
-        }
-        insertStatement.append(BaseDao.CLOSE_PARANTHESIS)
-                .append(BaseDao.DO_UPDATE_SET);
-        level = LEVEL.DO_UPDATE_SET_ADDED;
-        return this;
-    }
-
-    public <T> InsertStatementBuilder set(String columnName, T columnValue) {
-        if (LEVEL.DO_UPDATE_SET_ADDED != level && LEVEL.SET_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format(
-                    "Insert statement not in required state for call set(%s, %s). level = %s",
-                    columnName, columnValue, level));
-        }
-        Utility.validate(columnName, columnValue);
-        if (LEVEL.SET_ADDED == level) {
-            insertStatement.append(BaseDao.COMMA);
-        }
-        insertStatement.append(columnName)
-                .append(TOKENS.EQUALS)
-                .append(BaseDao.APOSTROPHE)
-                .append(columnValue)
-                .append(BaseDao.APOSTROPHE);
-        level = LEVEL.SET_ADDED;
-        return this;
-    }
-
-    public <T> InsertStatementBuilder setForNamedParameter(String columnName, String paramName) {
-        if (LEVEL.DO_UPDATE_SET_ADDED != level && LEVEL.SET_ADDED != level) {
-            throw new GenericDaoBuilderException(String.format(
-                    "Insert statement not in required state for call setForNamedParameter(%s, %s). level = %s",
-                    columnName, paramName, level));
-        }
-        Utility.validateColumnAndParamName(columnName, paramName);
-        if (LEVEL.SET_ADDED == level) {
-            insertStatement.append(BaseDao.COMMA);
-        }
-        insertStatement.append(columnName)
-                .append(TOKENS.EQUALS)
-                .append(BaseDao.COLON)
-                .append(paramName);
-        level = LEVEL.SET_ADDED;
         return this;
     }
 

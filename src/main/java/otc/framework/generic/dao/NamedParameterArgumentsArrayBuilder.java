@@ -60,6 +60,9 @@ public class NamedParameterArgumentsArrayBuilder {
      * @return
      */
     public Map<String, Object>[] build() {
+        if (paramsList == null) {
+            paramsList =  new ArrayList<>();
+        }
         this.paramsList.add(this.namedParameterArgumentsBuilder.build());
         return paramsList.toArray(new HashMap[paramsList.size()]);
     }
