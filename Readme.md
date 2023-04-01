@@ -10,10 +10,13 @@ The developer has to only extend the otc.framework.generic.dao.AbstractDaoImpl a
 //TODO - documentation is WIP.
 
 
+
+
+
 ## Contributing
 
 If you find this image useful here's how you can help:
 
-Send a pull request with your kickass new features and bug fixes
-Help new users with issues they may encounter
-Support the development of this image and star this repo !
+- To contribute code, send a pull request with your new features and bug fixes
+- Help new users with issues they may encounter
+- Star this repo if this component was useful to you !
