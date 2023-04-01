@@ -15,7 +15,7 @@ The developer has to only extend the otc.framework.generic.dao.AbstractDaoImpl a
 
 ## Contributing
 
-If you find this image useful here's how you can help:
+If you find this repo useful here's how you can help:
 
 - To contribute code, send a pull request with your new features and bug fixes
 - Help new users with issues they may encounter
