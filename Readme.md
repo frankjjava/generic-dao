@@ -1,4 +1,4 @@
-** Generic Dao
+## Generic Dao
 -----------
 
 Spring JDBC template gives unbeatable performance when compared to any ORM framework.
@@ -10,7 +10,7 @@ The developer has to only extend the otc.framework.generic.dao.AbstractDaoImpl a
 //TODO - documentation is WIP.
 
 
-** Contributing
+##Contributing
 If you find this image useful here's how you can help:
 
 Send a pull request with your kickass new features and bug fixes
